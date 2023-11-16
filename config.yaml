@@ -1,4 +1,4 @@
-baseURL: https://yoursite.example.com/
+baseURL: "https://splendid-gumdrop-ec2641.netlify.app"
 languageCode: en-us
 title: The Tensor Collective
 theme: PaperMod
