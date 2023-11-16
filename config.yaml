@@ -1,0 +1,50 @@
+baseURL: https://yoursite.example.com/
+languageCode: en-us
+title: The Tensor Collective
+theme: PaperMod
+metadataformat: "yaml"
+
+params:
+  homeInfoParams:
+    Title: Hello
+    Content: welcome to this banger
+  
+  socialIcons:
+    - name: github
+      url: "https://github.com/Ubiquinone-dot"
+    - name: linkedin
+      url: "www.linkedin.com/in/jasper-butcher-a08450207"
+
+  cover:
+    linkFullImage: true
+  
+  ShowBreadCrumbs: true
+  
+  ShowReadingTime: true
+
+  ShowShareButtons: true
+
+  ShowPostNavLinks: true
+
+menu: 
+  main:
+    - identifier: categories
+      name: Categories
+      url: /categories/
+      weight: 10
+    - identifier: about
+      name: About
+      url: /about/
+      weight: 20
+    - identifier: tags
+      name: Tags
+      url: /tags/
+      weight: 20
+    - identifier: archives
+      name: Archives
+      url: /archives/
+      weight: 30
+    # - identifier: graphview
+    #   name: Graph View
+    #   url: /graphview/
+    #   weight: 40  
