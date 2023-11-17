@@ -112,16 +112,34 @@
 }
 
 .article-image {
-    flex: 0 0 auto; /* Adjusts the sizing of the image container */
-    width: 25%;
+    flex: 0 0 50%; /* Adjusts the sizing of the image container */
+    border-radius: 0;
     padding-bottom: 5px;
     padding-right: 5px;
 }
+.article-image {
+    flex: 0 0 50%; /* Maintain the width as half of the parent container */
+    height: 200px; /* Adjust this value to crop the image as desired */
+    overflow: hidden; /* Hides any part of the image that overflows this div's bounds */
+    padding-bottom: 5px;
+    padding-right: 5px;
+    position: relative; /* Ensures proper positioning of the image */
+}
+
+.article-image img {
+    width: 100%; /* Ensures the image fills the width of the div */
+    height: auto; /* Maintains the aspect ratio of the image */
+    position: absolute; /* Absolute positioning relative to the div */
+    top: 50%; /* Aligns the middle of the image with the div's middle */
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centers the image */
+}
 
 .article-text {
-    flex: 1; /* Allows the text container to fill the remaining space */
-    padding-left: 10px; /* Left padding to maintain space between text and image */
+    flex: 0 0 50%; /* Half of the container width */
+    padding-left: 10px;
 }
+
 /* Resetting global margins/padding for specific elements */
 .article-content, .article-content * {
     margin-bottom: 0;
@@ -130,7 +148,12 @@
 
 @media (max-width: 768px) { /* Adjust the breakpoint as needed */
     .article-content {
-      flex-direction: column;
+        flex-direction: column;
     }
-  }
-  
+    .article-image {
+        height: 150px; /* Example height for smaller screens */
+    }
+    .article-image, .article-text {
+        flex-basis: 100%; /* Full width on smaller screens */
+    }
+}
