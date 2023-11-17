@@ -1,10 +1,13 @@
 baseURL: "https://main--the-tensor-collective.netlify.app/"
-languageCode: en-us
 title: The Tensor Collective
 theme: PaperMod
 metadataformat: "yaml"
+languageCode: en-us
 
 params:
+  label:
+    icon: "/brand/favicon_io/favicon.ico"
+    
   homeInfoParams:
     Title: Welcome to the Tensor Collective
     Content: Hello! We're a technical blog for machine learning. We launched in December 2023,
@@ -22,6 +25,7 @@ params:
   ShowPostNavLinks: true
   ShowShareButtons: false
   ShowWordCount: true
+  # ShowRssButtonInSectionTermList: true
   description: true
 
   # Socials
