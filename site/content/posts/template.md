@@ -3,7 +3,7 @@ title: "Template"
 date: 2023-11-16:30:03+00:00
 author: ["Jasper Butcher"]
 searchHidden: true
-draft: false
+draft: true
 cover:
     image: imgs/man.png
     alt: cool

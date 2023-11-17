@@ -114,7 +114,8 @@
 .article-image {
     flex: 0 0 auto; /* Adjusts the sizing of the image container */
     width: 25%;
-    padding-right: 10px; /* Right padding to add space between image and text */
+    padding-bottom: 5px;
+    padding-right: 5px;
 }
 
 .article-text {
