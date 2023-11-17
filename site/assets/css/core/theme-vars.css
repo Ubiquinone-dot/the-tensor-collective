@@ -5,6 +5,7 @@
     --main-width: 720px;
     --header-height: 60px;
     --footer-height: 60px;
+    /* --radius: 10px; */
     --radius: 1px;
 /* 
     --theme: rgb(255, 255, 255);
@@ -27,6 +28,8 @@
     --code-bg: rgb(246, 244, 232);      /* border of articles */
     --border: rgb(64, 119, 107);       /* Border of articles */
     --border: rgb(62, 20, 82);
+
+    --article-height: 200px;
     
 }
 
@@ -55,7 +58,6 @@
 .list {
     background: var(--code-bg);
 }
-
 .dark.list {
     background: var(--theme);
 }

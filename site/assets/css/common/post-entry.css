@@ -4,7 +4,7 @@
     flex-direction: column;
     justify-content: center;
     min-height: 320px;
-    margin: var(--gap) 0 calc(var(--gap) * 2) 0;
+    /* margin: var(--gap) 0 calc(var(--gap) * 2) 0; */
 }
 
 .first-entry .entry-header {
@@ -27,6 +27,8 @@
 
 .first-entry .entry-footer {
     font-size: 14px;
+    margin-top: 0px; 
+    padding-top: 0px;
 }
 
 .home-info .entry-content {
@@ -111,18 +113,16 @@
     justify-content: space-between; /* Optional: Adds space between the image and text */
 }
 
-.article-image {
-    flex: 0 0 50%; /* Adjusts the sizing of the image container */
-    border-radius: 0;
-    padding-bottom: 5px;
-    padding-right: 5px;
+.post-entry {
+    padding: 0;
 }
+
+/* Split the panel in two */
 .article-image {
     flex: 0 0 50%; /* Maintain the width as half of the parent container */
-    height: 200px; /* Adjust this value to crop the image as desired */
+    height: var(--article-height); /* Adjust this value to crop the image as desired */
     overflow: hidden; /* Hides any part of the image that overflows this div's bounds */
-    padding-bottom: 5px;
-    padding-right: 5px;
+    border-radius: 0px;
     position: relative; /* Ensures proper positioning of the image */
 }
 
@@ -138,13 +138,35 @@
 .article-text {
     flex: 0 0 50%; /* Half of the container width */
     padding-left: 10px;
+    padding-bottom: 0px;
+    height: var(--article-height);
 }
+
 
 /* Resetting global margins/padding for specific elements */
 .article-content, .article-content * {
     margin-bottom: 0;
     padding-bottom: 0;
 }
+.article-text {
+    flex: 0 0 50%; /* Half of the container width */
+    padding-left: 10px;
+}
+.article-text {
+    padding-top: 10px;
+    padding: 10px;
+}
+
+/* Move footer to the bottom, defined in list.html */
+.entry-footer {
+    padding-top: 20px;
+    padding-bottom: 0px;
+    margin-top: auto;
+}
+.article-text {
+    padding: 15px;
+}
+
 
 @media (max-width: 768px) { /* Adjust the breakpoint as needed */
     .article-content {
