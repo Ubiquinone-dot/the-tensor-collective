@@ -2,7 +2,8 @@
     --gap: 24px;
     --content-gap: 20px;
     --nav-width: 1024px;
-    --main-width: 720px;
+    /* --main-width: 720px; */
+    --main-width: 780px;
     --header-height: 60px;
     --footer-height: 60px;
     /* --radius: 10px; */
@@ -26,8 +27,10 @@
     --content: rgb(31, 31, 31);         /* border of articles */
     --hljs-bg: rgb(28, 29, 33);         /* border of articles */
     --code-bg: rgb(246, 244, 232);      /* border of articles */
-    --border: rgb(64, 119, 107);       /* Border of articles */
+
+    /* Border of articles */
     --border: rgb(62, 20, 82);
+    --border-secondary: rgb(64, 119, 107);       
 
     --article-height: 200px;
     
@@ -53,6 +56,7 @@
     --hljs-bg: rgb(46, 46, 51);
     --code-bg: rgb(55, 56, 62);
     --border: rgb(64, 119, 107);       /* Border of articles */
+    --border-secondary: rgb(62, 20, 82);    
 }
 
 .list {

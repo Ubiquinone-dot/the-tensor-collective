@@ -158,6 +158,18 @@
 }
 
 /* Move footer to the bottom, defined in list.html */
+.article-text {
+    display: flex; /* Set as flex container */
+    flex-direction: column; /* Children are stacked vertically */
+    justify-content: space-between; /* Aligns children with space between */
+    padding: 15px;
+    flex-grow: 1; /* Allows the container to grow and fill its parent */
+}
+.footer-bar {
+    color: var(--border-secondary);
+}
+
+/* 
 .entry-footer {
     padding-top: 20px;
     padding-bottom: 0px;
@@ -165,7 +177,7 @@
 }
 .article-text {
     padding: 15px;
-}
+} */
 
 
 @media (max-width: 768px) { /* Adjust the breakpoint as needed */

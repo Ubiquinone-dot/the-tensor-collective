@@ -77,6 +77,8 @@
 
   <!-- Text Content Container -->
   <div class="article-text">
+
+  <div>
   <header class="entry-header">
     <h2>
       {{- .Title }}
@@ -88,6 +90,9 @@
     <p>{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}...{{ end }}</p>
   </div>
   {{- end }}
+  </div>
+
+  
   {{- if not (.Param "hideMeta") }}
   <footer class="entry-footer">
     <div class="footer-bar">

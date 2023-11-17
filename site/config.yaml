@@ -48,7 +48,7 @@ params:
     favicon32x32:  "/brand/favicon_io/favicon-32x32.png"
     # apple_touch_icon:  "/brand/favicon_io/apple-touch-icon.png"
     # safari_pinned_tab:  "/brand/favicon_io/safari-pinned-tab.svg"
-    theme_color: "#ffffff"
+    # theme_color: "#ffffff"
 
 
 # MD to HTML settings
@@ -64,22 +64,26 @@ markup:
 
 menu: 
   main:
+    - identifier: home
+      name: Home
+      url: /
+      weight: 1
     - identifier: categories
       name: Categories
       url: /categories/
-      weight: 10
-    - identifier: about
-      name: About
-      url: /about/
       weight: 20
     - identifier: tags
       name: Tags
       url: /tags/
-      weight: 20
+      weight: 30
+    - identifier: about
+      name: About
+      url: /about/
+      weight: 40
     - identifier: archives
       name: Archives
       url: /archives/
-      weight: 30
+      weight: 50
     # - identifier: graphview
     #   name: Graph View
     #   url: /graphview/

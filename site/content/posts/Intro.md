@@ -10,10 +10,10 @@ cover:
     caption: cool DALLE-3
 TocOpen: true
 
-tags: []
-categories: ["ML"]
+# tags: []
+# categories: ["ML"]
 
-weight: 9999  # will be the last to be featured
+weight: 1  # will be the last to be featured
 ---
 
 # The Tensor Collective
