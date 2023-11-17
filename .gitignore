@@ -1,1 +1,10 @@
 .obsidian
+site/public
+*.lock
+*/*.lock
+*.swp
+*/*.swp
+*.swo
+*/*.swo
+*.swn
+*/*.swn

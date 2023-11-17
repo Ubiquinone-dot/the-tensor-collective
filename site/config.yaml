@@ -5,26 +5,43 @@ theme: PaperMod
 metadataformat: "yaml"
 
 params:
+  defaultTheme: auto
   homeInfoParams:
     Title: Hello
     Content: welcome to this banger
-  
+
+  ShowCodeCopyButtons: true
+  ShowBreadCrumbs: true
+  ShowReadingTime: true
+  ShowPostNavLinks: true
+
+  author: ["Jasper Butcher"]
+
+
   socialIcons:
     - name: github
       url: "https://github.com/Ubiquinone-dot"
     - name: linkedin
       url: "www.linkedin.com/in/jasper-butcher-a08450207"
 
-  cover:
-    linkFullImage: true
-  
-  ShowBreadCrumbs: true
-  
-  ShowReadingTime: true
+  assets:
+    # Using: https://favicon.io/favicon-converter/
+    favicon: "/brand/favicon_io/favicon.ico"
+    favicon16x16:  "/brand/favicon_io/favicon-16x16.png"
+    favicon32x32:  "/brand/favicon_io/favicon-32x32.png"
+    # apple_touch_icon:  "/brand/favicon_io/apple-touch-icon.png"
+    # safari_pinned_tab:  "/brand/favicon_io/safari-pinned-tab.svg"
 
-  ShowShareButtons: true
-
-  ShowPostNavLinks: true
+# MD to HTML settings
+markup:
+  defaultMarkdownHandler: goldmark
+  highlight:
+    # anchorLineNos: true
+    codeFences: true
+    guessSyntax: true
+    lineNos: true
+    # noClasses: false
+    style: monokai
 
 menu: 
   main:
@@ -48,3 +65,9 @@ menu:
     #   name: Graph View
     #   url: /graphview/
     #   weight: 40  
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON # is necessary
