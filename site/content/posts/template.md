@@ -7,7 +7,7 @@ searchHidden: true
 weight: 9999  # will be the last to be featured
 
 cover:
-    image: imgs/man.png
+    image: imgs/bug.png
     alt: cool
     caption: cool DALLE-3
 TocOpen: false
@@ -22,8 +22,6 @@ draft: false
 # Showcase of the various features
 
 ## Code snippets
-
-
 ```python
 def main(args):
     result = big_function(*args)
