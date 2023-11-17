@@ -5,24 +5,37 @@ theme: PaperMod
 metadataformat: "yaml"
 
 params:
-  defaultTheme: auto
   homeInfoParams:
-    Title: Hello
-    Content: welcome to this banger
-
+    Title: Welcome to the Tensor Collective
+    Content: Hello! We're a technical blog for machine learning. We launched in December 2023,
+      and we're still getting started. We aim to provide blogs on AI 
+      relating technical concepts. We're happy to expand our team, so if you're interested please do reach out.
+      Feel free to check out our articles below, the tags tab will have the
+      articles by key-word and the categories tab will have the articles by broader topics.
+      We hope you enjoy our articles!
+  defaultTheme: auto
+  
+  # General Blog settings
   ShowCodeCopyButtons: true
   ShowBreadCrumbs: true
   ShowReadingTime: true
   ShowPostNavLinks: true
+  ShowShareButtons: false
+  ShowWordCount: true
+  description: true
 
+  # Socials
+  comments: true
   author: ["Jasper Butcher"]
-
-
   socialIcons:
     - name: github
       url: "https://github.com/Ubiquinone-dot"
     - name: linkedin
-      url: "www.linkedin.com/in/jasper-butcher-a08450207"
+      url: "https://www.linkedin.com/in/jasper-butcher-a08450207/"
+    - name: twitter
+      url: ""
+    - name: other
+      url: ""
 
   assets:
     # Using: https://favicon.io/favicon-converter/
@@ -31,6 +44,8 @@ params:
     favicon32x32:  "/brand/favicon_io/favicon-32x32.png"
     # apple_touch_icon:  "/brand/favicon_io/apple-touch-icon.png"
     # safari_pinned_tab:  "/brand/favicon_io/safari-pinned-tab.svg"
+    theme_color: "#ffffff"
+
 
 # MD to HTML settings
 markup:

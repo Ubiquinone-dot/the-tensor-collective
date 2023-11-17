@@ -4,6 +4,7 @@
   <h1>
     {{ .Title }}
     <hr></h1>
+
     {{- if (.Param "ShowRssButtonInSectionTermList") }}
     {{- $rss := (.OutputFormats.Get "rss") }}
     {{- if (eq .Kind `page`) }}

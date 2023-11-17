@@ -3,17 +3,20 @@ title: "Template"
 date: 2023-11-16:30:03+00:00
 author: ["Jasper Butcher"]
 searchHidden: true
-draft: true
+
+weight: 9999  # will be the last to be featured
+
 cover:
     image: imgs/man.png
     alt: cool
     caption: cool DALLE-3
-TocOpen: true
+TocOpen: false
+ShowToc: true
 
-tags: []
+tags: ["None", "Template", "ML"]
 categories: ["ML"]
-
-weight: 9999  # will be the last to be featured
+description: This is the description of the article, declared in the --- area of the MD file used to create it.
+draft: false
 ---
 
 # Showcase of the various features
