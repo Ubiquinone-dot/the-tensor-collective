@@ -1,6 +1,6 @@
 ---
 title: "Template"
-date: 2023-11-16:30:03+00:00
+date: .Date
 author: ["Jasper Butcher"]
 searchHidden: true
 
