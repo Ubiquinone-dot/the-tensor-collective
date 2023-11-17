@@ -68,22 +68,22 @@ menu:
       name: Home
       url: /
       weight: 1
-    - identifier: categories
-      name: Categories
-      url: /categories/
-      weight: 20
-    - identifier: tags
-      name: Tags
-      url: /tags/
-      weight: 30
-    - identifier: about
-      name: About
-      url: /about/
-      weight: 40
-    - identifier: archives
-      name: Archives
-      url: /archives/
-      weight: 50
+    # - identifier: categories
+    #   name: Categories
+    #   url: /categories/
+    #   weight: 20
+    # - identifier: tags
+    #   name: Tags
+    #   url: /tags/
+    #   weight: 30
+    # - identifier: about
+    #   name: About
+    #   url: /about/
+    #   weight: 40
+    # - identifier: archives
+    #   name: Archives
+    #   url: /archives/
+    #   weight: 50
     # - identifier: graphview
     #   name: Graph View
     #   url: /graphview/
