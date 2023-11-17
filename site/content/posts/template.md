@@ -34,6 +34,16 @@ ssh natrolite@chem.ox.ac.uk
 
 ## KaTeX
 
+data! $e=mc$ neww $e=cm_{\sigma}$
+
+Here's an inline equation for convenience.
+
+Here is a more complex equation, written across a line:
+$$
+\int_{S\in R} U(S) dS \ \sim \mathcal{N}(0, \sigma^2I)
+$$
+
+This integral is central to many areas in mathematics.
 
 ## Images
 

@@ -165,8 +165,12 @@
     padding: 15px;
     flex-grow: 1; /* Allows the container to grow and fill its parent */
 }
-.footer-bar {
-    color: var(--border-secondary);
+.footer-bar hr {
+    /* color: var(--border-secondary); */
+    border: none; /* Remove default border styling if necessary */
+    height: 1px; /* You can adjust the thickness of the hr line */
+    background-color: var(--border); /* Set the hr color to grey */
+    margin-bottom: 3px;
 }
 
 /* 
