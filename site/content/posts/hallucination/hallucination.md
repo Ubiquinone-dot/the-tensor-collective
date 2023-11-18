@@ -5,7 +5,7 @@ date: 2023-11-17T22:16+00:00
 author: ["Jasper Butcher"]
 
 searchHidden: false
-ShowToc: true
+ShowToc: false
 TocOpen: false
 
 categories: [ "NLP" ]

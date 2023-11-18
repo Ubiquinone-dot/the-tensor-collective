@@ -10,12 +10,12 @@ params:
     
   homeInfoParams:
     Title: Welcome to the Tensor Collective
-    Content: Hello! We're a technical blog for machine learning. We launched in December 2023,
-      and we're still getting started. We aim to provide blogs on AI 
-      relating technical concepts. We're happy to expand our team, so if you're interested please do reach out.
+    Content: Hello! A technical blog of mine for machine learning. I launched TTC in December 2023,
+      and I'm still getting started. I aim to provide blogs on AI 
+      relating technical concepts. I'm happy to expand, so if you're interested please do reach out!
       Feel free to check out our articles below, the tags tab will have the
       articles by key-word and the categories tab will have the articles by broader topics.
-      We hope you enjoy our articles!
+      I hope you enjoy the articles!
   defaultTheme: auto
   
   # General Blog settings
