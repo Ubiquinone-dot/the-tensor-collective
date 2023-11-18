@@ -13,7 +13,7 @@ tags: []
 description: "Insight into the cognition behind large language models with a simple conversation with GPT-4."
 
 cover:
-  image: PATH.png
+  image: imgs/DALLE3Bug.png
   alt: DALLE-3 generated image with prompt - Impressionist oil painting illustrating a bug, but instead of its natural features, it bursts with vibrant colors and patterns evoking an exploding nebula
 
 weight: 10

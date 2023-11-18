@@ -22,7 +22,7 @@ cover:
 weight: 10
 draft: false
 
----
+ 
 
 *simple insights into the cognition behind large language models*
 
