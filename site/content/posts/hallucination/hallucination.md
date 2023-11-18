@@ -1,6 +1,3 @@
-2023-11-17 22:16
-Status: #idea #article #draft
-Tags: [[The Tensor Collective]]
 
 ---
 title: "Hallucination isn't a bug, it's a feature"
@@ -13,7 +10,7 @@ TocOpen: false
 
 categories: []
 tags: []
-description: "In this article, we give some insight into the cognition behind large language models with a simple conversation with GPT-4."
+description: "Insight into the cognition behind large language models with a simple conversation with GPT-4."
 
 cover:
   image: PATH.png
@@ -21,7 +18,6 @@ cover:
 
 weight: 10
 draft: false
-
 ---
 
 *simple insights into the cognition behind large language models*
@@ -80,7 +76,7 @@ P(word_i) = Softmax(z_i \;/\; T) = \frac{e^{z_i/T}}{\sum_{j} e^{z_j/T}}
 $$
 The $T$ here is the temperature parameter. The output of the model will be some distribution across parameters, $z_i$. The softmax function converts these into probabilities which we can sample from, giving us the next word in the sequence. The figure below shows how this affects a gaussian distribution for illustration:
 
-![[TSoftmax.excalidraw|1000]]
+![image](softmax.png)
 
 Lower temperatures lead to sharper distributions: the highest probability distributions become more likely to be sampled. Conversely, higher temperatures mean the distributions are more uniform. When GPT-4 responds using a temperature of 1.0, we can access the less likely, extremes, of the distribution.
 

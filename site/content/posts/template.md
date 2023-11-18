@@ -7,7 +7,7 @@ searchHidden: true
 weight: 9999  # will be the last to be featured
 
 cover:
-    image: imgs/bug.png
+    image: imgs/DALLE3Bug.png
     alt: cool
     caption: cool DALLE-3
 TocOpen: false
