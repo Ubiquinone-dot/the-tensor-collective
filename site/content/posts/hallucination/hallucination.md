@@ -8,8 +8,8 @@ searchHidden: false
 ShowToc: true
 TocOpen: false
 
-categories: []
-tags: []
+categories: [ "NLP" ]
+tags: [ "GPT-4", "Transformers" ]
 description: "Insight into the cognition behind large language models with a simple conversation with GPT-4."
 
 cover:
@@ -20,7 +20,7 @@ weight: 10
 draft: false
 ---
 
-*simple insights into the cognition behind large language models*
+*Simple insights into the cognition behind large language models.*
 
 With the advent of large language models (LLMs), much research and debate has naturally revolved around the flaws large language models exhibit. Ever wondered how ChatGPT manages to overlook aspects, but will immediately apologise and correct it's error once prompted? Hallucinations give fascinating insight into the cognition ongoing within a large language model.
 
@@ -31,9 +31,8 @@ Here, we'll make the case that the general user experience of LLMs do not give f
 
 If LLMs are so good at english, what happens if we ask them to avoid writing any english words?
 
-```
+```bash
 #USER: Write me a paragraph that looks like english but contains no words in the english dictionary
-
 #GPT-4: "Florble grinty moopler, zibbering quibbly in the glorpish sun. Bingle zorps flibbered,  brintly under the zorgish moon. Jibberish blorps, frinting and glabbering, zorped the quibbly flibber. Grinty blorpish, the moopler zorped, zibbering glorpishly in the brintly sun.
 ```
 
@@ -43,7 +42,7 @@ It's not actually difficult to string together a series of words that vaguely re
 
 Let's retry, making it clear that words like 'it', 'the' and 'and' aren't allowed:
 
-```
+```bash
 # GPT-4: Zibber flibber zog, blibber zog zog. Zibber flibber zog, blibber zog zog. Zibber flibber zog, blibber zog zog. Zibber flibber zog, blibber zog zog. Zibber flibber zog, blibber zog zog. Zibber flibber zog, blibber zog zog. Zibber flibber zog, blibber zog zog.
 ```
 
@@ -62,7 +61,7 @@ This is the origin of why some users of ChatGPT report well-structured, yet vagu
 ### The temperature parameter
 This sections is a bit of an aside for the sake of curiosity; When you use ChatGPT, the GPT model predict the most-likely next word. However you can actually vary the sampling distribution across the next token that the model uses, in OpenAI's playground API. Let's try asking the same question as above but with a temperature of 1.0 instead of 0:
 
-```
+```bash
 # GPT-4: Flibber goshtop zilber jibnosh, crango huplip twads zinxle. Sproggle zuntip, yalgrin bobble gupshoe floxil. Zebnork quaflit vungnip, splingo wognip rindle yublop. Ghiblon tufnip wablon, dwindle zoplit yibber quopxin. Jindle blop gixnip, flob wipsin yipble zuntop. I'm sorry if I misunderstood, but it's quite challenging.
 ```
 
@@ -72,11 +71,11 @@ The temperature parameter allows less likely words to be sampled. In the limit o
 
 The exact parameterisation for the GPT-4 playground isn't of course public information but it's very likely to be related to the following:
 $$
-P(word_i) = Softmax(z_i \;/\; T) = \frac{e^{z_i/T}}{\sum_{j} e^{z_j/T}}
+P(word_i) = Softmax(z_i \ / \ T) = \frac{e^{z_i/T}}{\sum_{j} e^{z_j/T}}
 $$
 The $T$ here is the temperature parameter. The output of the model will be some distribution across parameters, $z_i$. The softmax function converts these into probabilities which we can sample from, giving us the next word in the sequence. The figure below shows how this affects a gaussian distribution for illustration:
 
-![image](softmax.png)
+![image](/posts/hallucination/softmax.png)
 
 Lower temperatures lead to sharper distributions: the highest probability distributions become more likely to be sampled. Conversely, higher temperatures mean the distributions are more uniform. When GPT-4 responds using a temperature of 1.0, we can access the less likely, extremes, of the distribution.
 
@@ -94,7 +93,7 @@ Let's rephrase our discussion in another way. GPT-4 is undoubtedly an incredbily
 
 We discussed that inference by probability is inherently flawed. However, what if we instead made a host of models, whose task is solely to predict the next word. What if we made such systems to wrap around a language model? That is, if we ignore computational cost, could we do something like: "your task is to predict the next word in the sequence, explaining your reasoning". Here, we iteratively break down the question, and try to make the model build up some intuition and problem solving. The result of doing this on the task we discussed earlier (with the same parameters) removed our previous issue of the model repeating itself: 
 
-```
+```bash
 GPT-4: Zibber 
 GPT-4: flibber 
 GPT-4: wobber 
