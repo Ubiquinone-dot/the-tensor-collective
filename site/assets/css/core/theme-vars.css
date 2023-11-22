@@ -33,8 +33,7 @@
 
     /* Border of articles */
     --border: rgb(62, 20, 82);
-    --border-secondary: rgb(64, 119, 107);       
-
+    --border-secondary: rgb(64, 119, 107);
     --article-height: 200px;
     
 }
