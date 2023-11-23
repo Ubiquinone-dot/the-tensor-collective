@@ -22,9 +22,9 @@ draft: false
 
 *Simple insights into the cognition behind large language models.*
 
-With the advent of large language models (LLMs), much research and debate has naturally revolved around the flaws large language models exhibit. Ever wondered how ChatGPT manages to overlook aspects, but will immediately apologise and correct it's error once prompted? Hallucinations give fascinating insight into the cognition ongoing within a large language model.
+With the advent of large language models (LLMs), much research and debate has naturally revolved around the flaws large language models exhibit. Ever wondered how ChatGPT manages to overlook aspects, but will immediately apologise and correct it's error once prompted? 
 
-Here, we'll make the case that the general user experience of LLMs do not give full credit to their capacities. Discussing ways to probe the true knowledge within these models. We'll also see what efforts are being made to combat hallucinations and force the models to reference sources in their responses.
+Here, we gently introduce how hallucinations are related to the cognition ongoing within a large language model. Discussing ways to probe the true knowledge within these models. We'll then put this in the context of the bigger picture for LLMs.
 
 ## There's no AGI in LLM
 ### Language models don't speak gibberish
@@ -46,20 +46,20 @@ Let's retry, making it clear that words like 'it', 'the' and 'and' aren't allowe
 # GPT-4: Zibber flibber zog, blibber zog zog. Zibber flibber zog, blibber zog zog. Zibber flibber zog, blibber zog zog. Zibber flibber zog, blibber zog zog. Zibber flibber zog, blibber zog zog. Zibber flibber zog, blibber zog zog. Zibber flibber zog, blibber zog zog.
 ```
 
-This fixed the issue, but it seems like it's just repeating the first sentence it made?
+This fixed the issue, but it seems like it's just repeating the first sentence it made. Here's why:
 
 At a high level, large language models are trained on a large corpus of text data; they extract complex statistical patterns from language and update their parameters accordingly. They are probabilistic in the sense that they create distributions across all the possible words, subwords or characters that are likely to come after what your prompt said. They are called *autoregressive* as they then take the most probable word they predicted and use that too to infer the next word in their response.
 
 The common theme here is what we're probing is the models' ability to think out of it's knowledge distribution. This is a task specifically designed to be difficult for LLMs, as it requires the explicit inference of unlikely sequences of words, not known to its dataset. Of course, GPT-4 may have been trained on texts containing gibberish; articles or webpages actually containing some combination of these words, making it possible for it to complete this task. In some ways, since GPT-4 was trained to be correct all the time, it's sometimes difficult for it to be wrong.
 
-So why does GPT-4 repeat itself? One way to think about this would be to see that the first word is the "hardest" for the model to generate; it hasn't had many samples in it's database for this. Once it has created the first, it may be recognising it's own output as a correct answer and therefore begins a chain of similar words; `Zibber flibber zog` are somewhat similar in their phrasing.
+So why does GPT-4 repeat itself? One way to think about this would be to see that the first word is the "hardest" for the model to generate; it hasn't had many samples in it's database for this. Once it has created the first, it may likely be recognising it's own output as a correct answer and therefore begins a chain of similar words; `Zibber flibber zog` are somewhat similar in their phrasing.
 
 Importantly it's not that the sampling process is intelligently done by the model. It is the "modelling" process that we consider intelligent. It doesn't know that the task is to find less probable words and therefore should essentially flip it's model distribution upside down to acomplish the task, the only thing it "knows" is how to create a distribution over possible answers. 
 
 This is the origin of why some users of ChatGPT report well-structured, yet vague and "average" answers to their questions. LLMs reason in a way that is probabilistic and holistic, yet uniform and completely disconnected from making semantic links.
 
 ### The temperature parameter
-This sections is a bit of an aside for the sake of curiosity; When you use ChatGPT, the GPT model predict the most-likely next word. However you can actually vary the sampling distribution across the next token that the model uses, in OpenAI's playground API. Let's try asking the same question as above but with a temperature of 1.0 instead of 0:
+There exists quite a quick fix to solve the issues above. When you use ChatGPT, the GPT model predict the most-likely next word. However you can actually vary the sampling distribution across the next token that the model uses, in OpenAI's playground API. Let's try asking the same question as above but with a temperature of 1.0 instead of 0:
 
 ```bash
 # GPT-4: Flibber goshtop zilber jibnosh, crango huplip twads zinxle. Sproggle zuntip, yalgrin bobble gupshoe floxil. Zebnork quaflit vungnip, splingo wognip rindle yublop. Ghiblon tufnip wablon, dwindle zoplit yibber quopxin. Jindle blop gixnip, flob wipsin yipble zuntop. I'm sorry if I misunderstood, but it's quite challenging.
@@ -85,7 +85,7 @@ There's a relation here to google search that we're stating: The role that LLMs 
 
 Note this was done using the instruction-tuned GPT-4, so the answers may differ from the regular ChatGPT interface.
 
-## Conclusion
+## Discussion
 
 The issue with hallucinations is a feature of the transformer architecture. They're issues we will be able to fix, but not with bigger models or better training alone. They are, for now, an inherent issue with the way large language models attain and store information. Some day, it may be possible to inplant directly into the weights of a model specific facts, information or experiences, similar to how humans accumulate memories. The relationship between hallucinations and the concept of truth is nuanced and complex. 
 
@@ -102,4 +102,7 @@ GPT-4: kibber
 ...
 ```
 
-The language models we use today are perhaps increasingly considered better than an analogous google search, where we understand the result is not necessarily the truth but have been swayed to it's reliability with time. It's astonishing, the level of computer cognition we have access to. The lack of understanding and control we have over the cognitive behaviour of large language models reflects a general unease within the machine learning community; models are easy to train but hard to interpret, making models difficult to deploy. Efforts for interpretability in machine learning is an article for itself, but here we've touched upon how the scale of the complexity of the issue of hallucinations is complex to solve. Hallucinations serve as the inflection point for AGI, the point where statistical pattern matching becomes exact, robust semantic reasoning.
+You can also make the case that for many tasks, such as creative writing or experiment design, it is necessary to be able to make leaps of judgement and only then further refine the structure of validity of the novel ideas. You could propose a certain 'creative-critic' framework of agents. A high-temperature LLM with an added propensity to hallucinate creative ideas, whose ideas would be criticised and built upon by a lower-tempeature hallucination-aware model.
+
+## Conclusion
+The language models we use today are perhaps increasingly considered better than an analogous google search. We understand the result is not necessarily the truth but have been swayed to it's reliability with time. It's astonishing, the level of computer cognition we have access to. The lack of understanding and control we have over the cognitive behaviour of large language models reflects a general unease within the machine learning community; models are easy to train but hard to interpret, making models difficult to deploy. Efforts for interpretability in machine learning is an article for itself, but here we've touched upon how the scale of the complexity of the issue of hallucinations is complex to solve. Hallucinations serve as the inflection point for AGI, the point where statistical pattern matching becomes exact, robust semantic reasoning.
