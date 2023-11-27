@@ -16,7 +16,7 @@ cover:
   image: imgs/DALLE3Bug.png
   alt: DALLE-3 generated image with prompt - Impressionist oil painting illustrating a bug, but instead of its natural features, it bursts with vibrant colors and patterns evoking an exploding nebula
 
-weight: 10
+weight: 20
 draft: false
 ---
 
