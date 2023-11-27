@@ -110,7 +110,7 @@ $$
 h(x^l) = AV^T
 $$
 
-![[/posts/transformers/basisvectors.png]]
+![image](/posts/transformers/basisvectors.png)
 
 The key point here is that our $A$ matrix attends to the different basis vectors, we'll show how this can be chosen in a minute, but the key point here is that we have n basis vectors which we want a normalized vector of coefficients to have some understanding of.
 
