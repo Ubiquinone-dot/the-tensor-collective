@@ -1,4 +1,6 @@
-baseURL: "https://thetensorcollective.com/"
+# baseURL: "https://main--the-tensor-collective.netlify.app/"
+# baseURL: "https://thetensorcollective.com/"
+baseURL: "http://thetensorcollective.com/"
 title: The Tensor Collective
 theme: PaperMod
 metadataformat: "yaml"
