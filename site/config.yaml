@@ -12,9 +12,8 @@ params:
     
   homeInfoParams:
     Title: Welcome to the Tensor Collective
-    Content: TTC is a technical blog of mine for machine learning. 
-      I'm a soon-to-be PhD student in machine learning, having pivoted from being
-      self-taught in ML for Chemistry. 
+    Content: TTC is a technical blog of mine for machine learning. I'm a Chemistry finalist at Oxford,
+    currently working in machine learning applications for Chemistry.
       I launched TTC in December 2023, for a few reasons;
       Firstly, I believe there's a place for honest documentation and showcase
       of projects and ideas, in less serious settings than my academic work.
