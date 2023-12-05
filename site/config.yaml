@@ -46,7 +46,7 @@ params:
     - name: twitter
       url: ""
     - name: other
-      url: ""
+      url: "https://drive.google.com/file/d/1TmbkOgTMCDEZTmPG4PpOTSCJqU4qvC31/view?usp=drive_link"
 
   assets:
     # Using: https://favicon.io/favicon-converter/
