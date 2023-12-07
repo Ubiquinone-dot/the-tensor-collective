@@ -21,7 +21,8 @@ params:
       passion for the subject, and I hope to put slightly less focus on rigour
       and more on telling a captivating story with my articles.
       Please do reach out if you have any questions, I hope you enjoy the articles!
-  defaultTheme: auto
+  # defaultTheme: auto
+  defaultTheme: light
   
   # General Blog settings
   ShowCodeCopyButtons: true
