@@ -12,8 +12,7 @@ params:
     
   homeInfoParams:
     Title: Welcome to the Tensor Collective
-    Content: Hi! Welcome to my blog TTC. I'm a PhD student developing protein design methodologies in AI. 
-    TTC is a small collection of topics within ML, but is very much a work in progress. However, do check out my links, CV and whatnot here.
+    Content: Hi! Welcome to my blog TTC. I'm a PhD student at the University of Washington developing protein design methodologies in AI. I graduated in 2024 from Oxford with a Master's degree in chemistry, specialising in generative models for amorphous materials. TTC is a small collection of topics within ML, but is very much a work in progress. However, do check out my links, CV and whatnot here.
   defaultTheme: light
   
   # General Blog settings
