@@ -8,7 +8,7 @@ ShowToc: true
 TocOpen: false
 
 categories: []
-tags: []
+tags: [2025]
 description: "I've begun to notice a trend in recent successful architectures across protein modelling and LLMs. In this article, I discuss how very impressive models have been designed by focusing on scale, rather than efficiency and in some cases requiring unintuitive choices to do so."
 
 cover:
@@ -19,6 +19,8 @@ weight: 10
 draft: false
 
 ---
+
+*Jan 9 2025*
 
 ### Introduction
 I recently came across a very interesting paper by Meta, [Pagnoni 2024 et al.](https://ai.meta.com/research/publications/byte-latent-transformer-patches-scale-better-than-tokens/). The title of which, *Byte Latent Transformer: Patches Scale Better
