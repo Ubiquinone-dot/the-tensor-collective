@@ -1,5 +1,5 @@
 ---
-title: "How we built RFdiffusion3"
+title: "On building diffusion models"
 date: 2025-09-19T14:37+00:00
 author: ["Jasper Butcher"]
 
@@ -19,11 +19,7 @@ weight: 9
 draft: false
 
 ---
-
-# How we built RFdiffusion3
-BioRXiv: [https://doi.org/10.1101/2025.08.14.670328](https://www.biorxiv.org/content/10.1101/2025.09.18.676967v1)
-
-[X](https://x.com/butcher_jasper/status/1968900323071713320)
+BioRXiv DOI [https://doi.org/10.1101/2025.08.14.670328](https://www.biorxiv.org/content/10.1101/2025.09.18.676967v1) | Summary on [X](https://x.com/butcher_jasper/status/1968900323071713320)
 
 ## Introduction
 As of the time of writing, we've just released RFdiffusion3's preprint. A component I often feel is missing from papers is the journey that went on behind the scenes. I went into the field of building models 3 years ago completely blind, and would've loved to know what it looks like on the inside. With this article, I wanted to share to share some of the experiences we had, and how this project changed the way I thought about building generative models to solve real world problems.
