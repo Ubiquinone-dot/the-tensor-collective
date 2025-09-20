@@ -50,7 +50,7 @@ One key limitaiton of RFD2 was that it had to use multiple diffusion tracks to u
 ### AlphaFold3 and the "fold" in RFdiffusion
 Both RFD1 and RFD2 were forged from their respective protein folding architectures (RosetTTAFold and RF2AA). With RFD3 we built on the code for RF3 - consisting primarily of the AlphaFold3 architecture. AF3 introduced all-atom diffusion in a novel way, and did so without using **frames** or **equivariance**, two components which signifcantly increased the complexity of previous models.
 
-Part of what inspired me from AF3 was concurrent work from Pagnoni *et al.* 2025 ("Byte Latent Transformer") on creating end-to-end trained LLMs without tokenizers. Pagnoni suggested that indeed the use of heavy inductive biases, such as efficient tokenizers, might not be necessary when you scale - similar to the work of AF3 wrt removing equivariance and frames. So perhaps efficiency is good, but scale is better.
+Part of what inspired me from AF3 was concurrent work from [Pagnoni *et al.* 2025](https://aclanthology.org/2025.acl-long.453/) ("Byte Latent Transformer") on creating end-to-end trained LLMs without tokenizers. Pagnoni suggested that indeed the use of heavy inductive biases, such as efficient tokenizers, might not be necessary when you scale - similar to the work of AF3 wrt removing equivariance and frames. So perhaps efficiency is good, but scale is better.
 
 Additionally, inspirations from their work also directly made it into the preprint version of RFD3 in the form of using cross attention between tracks, drawing on the similarity between the fields: bytes are to words as atoms are to residues. 
 ## Development of RFD3
