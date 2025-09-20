@@ -7,7 +7,7 @@ draft: false
 cover:
     image: imgs/man.png
     alt: I can't paint as well as DALLE, but that's fine
-    caption: Impressionist oil painting from DALLE-3.
+    caption: An impressionist oil painting from DALLE-3 of a man gazing into an exploding nebula.
 TocOpen: true
 # tags: []
 # categories: ["ML"]
@@ -17,7 +17,7 @@ description: "This blog consists of a small collection of projects of mine that 
 
 ---
 
-# Why
+# Introduction
 
 Machine learning is inherently simple. Take a random matrix, apply it to your input and calculate a number that is proportional to how close you are to your target for said input. Now use an automatic differentiation package to take care of the calculus for you to figure out how much you need to change the parameters to get a better matrix. Repeat this enough times and you're on your way to the vast majority of deep learning algorithms.
 
