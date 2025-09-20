@@ -75,3 +75,6 @@ Coming back to active site scaffolding, active site scaffolding is a hard proble
 RFD3 became easy to work with for enzyme design because it was no longer two diffusion tracks ($x_t$, $s_t$) that had to join up; it was simply one all-atom track $x_t^{\mathrm{all-atom}}$ that had to join up with it's condition $c$. This approach had minimal added complexity added to the architecture and training, and meant we could spend a lot of time on code cleanliness and allowed other people to collaborate together on one model. A second point to code, I think we got the principles of bridging metrics right; automatic shallow evaluations and lot's of them to look at; this meant when things weren't working (which they weren't quite often) we had metrics to evaluate how and could backtrack why - It was easier to send off the model to train on a new task than it was to evaluate whether it had learned anything, so we'd often do the former first and then start working the latter during training. Lastly, nothing beats working with talented and smart people, the team was unbelievable, it was incredibly fun the whole way through.
 
 -Jasper
+20 Sep 2025
+
+{{< figure src="/posts/rfd3/codiffusion.gif" caption="Co-diffusion of active site and ligand with RFdiffusion3." >}}
