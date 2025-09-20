@@ -22,6 +22,7 @@ draft: false
 
 # How we built RFdiffusion3
 BioRXiv: [https://doi.org/10.1101/2025.08.14.670328](https://www.biorxiv.org/content/10.1101/2025.09.18.676967v1)
+
 [X](https://x.com/butcher_jasper/status/1968900323071713320)
 
 ## Introduction
@@ -35,7 +36,7 @@ I became interested in the problem of active site scaffolding, being a chemist w
 
 The approach I worked on (figure **1**) would, at every iteration, insert the nearest inverse rotamer to the active site tipatoms. It would, in theory, allow you to start from a minimal specification of an active site without telling the model where the active site residues belong to, and it would figure out the optimal location throughout the trajectory.
 
-![image](/posts/rfd3/inverse_rotamer_design.png)
+{{< figure src="/posts/rfd3/inverse_rotamer_design.png" caption="Inverse rotamer design with hallucination diagram" >}}
 
 This worked reasonably well, but was admittedly a hacky solution to a hard problem and hallucination was quickly superseeded by the development of RFdiffusion(1).
 
