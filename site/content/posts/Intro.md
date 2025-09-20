@@ -6,10 +6,9 @@ author: ["Jasper Butcher"]
 draft: false
 cover:
     image: imgs/man.png
-    alt: cool
-    caption: cool DALLE-3
+    alt: I can't paint as well as DALLE, but that's fine
+    caption: Impressionist oil painting from DALLE-3.
 TocOpen: true
-
 # tags: []
 # categories: ["ML"]
 
