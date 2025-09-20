@@ -30,6 +30,7 @@ I pivoted to machine learning in recent years with a curiosity founded on how si
 
 My journey as a Chemist began with an infatuation for the vast complexity of chemical processes, and their wildly unpredictable behaviour. The Briggs-Rauscher displays oscillating changes between vibrant shades of blue and pale yellow, only explainable via a complex chain of interlinked single-step reactions. Algorithms capable of surpassing human-level identification are too, nothing more than a complex orchestration of simple building blocks; simple calculus and matrix products can get you to an accuracy of around 90% for classifying hand-drawn digits. Time will tell what a decade of engineering and science can get you!
 
+-Jasper, last updated Sep 20, 2025
 
 
 <!-- ![name](path/to/image.png#center) Use this to center -->
