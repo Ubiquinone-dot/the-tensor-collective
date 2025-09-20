@@ -15,7 +15,7 @@ cover:
   image: imgs/dna_binder.png
   alt: "Generated image of a DNA binding protein, an impressionist painting painted in the style of an exploding nebula"
 
-weight: 0
+weight: 9
 draft: false
 
 ---
