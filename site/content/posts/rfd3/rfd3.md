@@ -1,13 +1,3 @@
-2025-09-19 14:37
-Status: #idea #article #draft
-Tags: [[The Tensor Collective]]
-
-## Article notes & Planning
-
-![[ChatGPT Image Sep 19, 2025, 02_38_16 PM.png]]
-
-# Formatted article:
-
 ---
 title: "How we built RFdiffusion3"
 date: 2025-09-19T14:37+00:00
@@ -25,7 +15,7 @@ cover:
   image: imgs/dna_binder.png
   alt: "Generated image of a DNA binding protein, an impressionist painting painted in the style of an exploding nebula"
 
-weight: 10
+weight: 0
 draft: false
 
 ---
