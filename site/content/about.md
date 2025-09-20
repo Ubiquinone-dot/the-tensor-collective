@@ -13,6 +13,4 @@ author: ["Jasper Butcher"]
 
 ---
 
-I'm an undergraduate chemist yadyaydyayda.
-
-
+Page incomplete, come back soon!

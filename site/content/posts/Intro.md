@@ -14,7 +14,7 @@ TocOpen: true
 # categories: ["ML"]
 
 weight: 1  # will be the last to be featured
-description: "Welcome to The Tensor Collective - A collection of personal projects of mine that I've turned into readable articles, with the goal of bridging scientists into machine learning. Here, you'll find everything you need to know about the blog!"
+description: "This website is a small collection of projects of mine that I've turned into readable articles, with the goal of bridging scientists into machine learning. Here, you'll find everything you need to know about the blog!"
 
 ---
 
