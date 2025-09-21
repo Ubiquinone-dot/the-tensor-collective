@@ -15,8 +15,10 @@ params:
     Content: Hi! I'm a PhD student at the BakerLab, University of Washington. 
       I develop protein design methodologies to solve disease and climate change. 
       I obtained my Master's in 2024 from Oxford in chemistry, specialising in generative models for amorphous materials for my thesis. 
-      TTC is a small collection of topics within ML and is very much a work in progress. 
-      However, do check out my links, CV and whatnot here. -Jasper
+      TTC is a small collection of essays of mine within ML; it's very much a work in progress, 
+      but I've found it a nice outlet for some unshared thoughts and getting some writing practise in.
+      Do send me a message if you want to continue the conversation!
+      Also, do check out my links, CV and whatnot here. -Jasper
   defaultTheme: light
   
   # General Blog settings
