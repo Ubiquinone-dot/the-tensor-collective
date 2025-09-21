@@ -62,9 +62,10 @@ I think one of the things that enabled us to iterate the basics of the model fas
 - Days: Whether the finer details of structure and sequence look good (rotamer quality, sequence distribution)
 - Days/Weeks: shallow AlphaFold(2) evaluations on simple tasks like unconditional generation or motif scaffolding. 
 - Weeks: deep evaluations, such as those presented in the paper. This undoubtedly was the hardest part, setting these up is a real challenge when you branch out to several tasks.
-I think this is unfortunately where compute enables a few advantages; streamlining this process inefficiently is easier if you're with a big company, when you don't have unlimited resources, you have to find ways to make it efficient.
 
-I'd say this is one of the places where a small, efficient model reaps a tonne of benefits. Scaling up and making the model better is easy, getting the right amount of signal is hard. [WandB](wandb.ai) is the greatest tool for this, hook it up to your workflows. Efficient automatic logging is a must, especially if you're compute constrained. You don't want to have to "test if the model looks good", the test results should be in your browser.
+I think, this is unfortunately where compute enables a few advantages; streamlining this process inefficiently is easier if you're with graced with compute, when you don't have unlimited resources, you have to find ways to make it efficient. You may only get a few shots on the big benchmarks, so you have to make them count. You certainly can't sweep every parameter under the sun on the big benchmarks (nor is there any point in doing so.) Thus, you need a plan for 2: (i) how training will scale up, and (ii) how evaluation will scale up.
+
+I'd say this is one of the places where a small, efficient model reaps a tonne of benefits. Scaling up and making the model better is easy, getting the right amount of signal is hard. [WandB](wandb.ai) is the greatest tool for this, hook it up to your workflows. Efficient automatic logging is a must, especially if you're compute constrained. You don't want to have to sit down and "test if the model looks good", the test results should be in your browser.
 ### Define your problem, and make it hard
 Evaluations are an **extremely hard problem** in protein design, especially with the field moving so fast. Unfortunately, every benchmark has problems with  - It's basically like asking ChatGPT whether your essay sounds good, sometimes it'll hallucinate and lie to you (it certainly does with mine.)
 
