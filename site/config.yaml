@@ -41,7 +41,7 @@ params:
       url: "https://www.linkedin.com/in/jasper-butcher-a08450207/"
     - name: twitter
       url: "https://x.com/butcher_jasper"
-    - name: google-scholar
+    - name: googlescholar
       url: https://scholar.google.com/citations?user=yBvfTiX_U3AC
     - name: other
       url: "https://drive.google.com/file/d/1TmbkOgTMCDEZTmPG4PpOTSCJqU4qvC31/view?usp=drive_link"
