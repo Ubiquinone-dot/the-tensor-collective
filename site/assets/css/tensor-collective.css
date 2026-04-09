@@ -143,6 +143,26 @@ img, video { max-width: 100%; height: auto; }
   padding: 3.5rem 0 3rem;
   border-bottom: 1px solid var(--border);
 }
+.hero-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 3rem;
+  align-items: start;
+}
+.hero-text { min-width: 0; }
+.hero-photo { position: sticky; top: 80px; }
+.hero-photo img {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: block;
+}
+@media (max-width: 600px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .hero-photo { position: static; max-width: 260px; margin: 0 auto; }
+}
 .hero h1 {
   font-family: var(--font-serif);
   font-weight: 600;

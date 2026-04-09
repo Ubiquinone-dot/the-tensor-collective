@@ -1,6 +1,7 @@
 {{ define "main" }}
 <section class="hero">
-  <div class="container">
+  <div class="container hero-grid">
+    <div class="hero-text">
     <h1>Jasper</h1>
     <p class="subtitle">PhD Student at BakerLab</p>
     <p class="bio">{{ site.Params.homeInfoParams.Content | markdownify }}</p>
@@ -21,6 +22,10 @@
         {{- end -}}
       </a>
       {{- end -}}
+    </div>
+    </div>
+    <div class="hero-photo">
+      <img src="{{ "/imgs/profile.jpg" | relURL }}" alt="Jasper Butcher" loading="eager" />
     </div>
   </div>
 </section>
