@@ -150,18 +150,20 @@ img, video { max-width: 100%; height: auto; }
   align-items: start;
 }
 .hero-text { min-width: 0; }
-.hero-photo { position: sticky; top: 80px; }
+.hero-photo { position: sticky; top: 2rem; }
 .hero-photo img {
   width: 100%;
+  height: auto;
   max-height: 500px;
   object-fit: cover;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   display: block;
 }
 @media (max-width: 600px) {
   .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
-  .hero-photo { position: static; max-width: 260px; margin: 0 auto; }
+  .hero-photo { position: static; max-width: 280px; margin: 0 auto; }
 }
 .hero h1 {
   font-family: var(--font-serif);
