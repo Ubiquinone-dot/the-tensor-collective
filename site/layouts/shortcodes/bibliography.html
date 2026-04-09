@@ -1,0 +1,47 @@
+{{- /*
+  Bibliography: {{< bibliography >}}         (only keys cited in this post)
+                {{< bibliography "all" >}}   (every entry in refs.bib)
+  Renders a numbered reference list with anchors matching the cite shortcode.
+*/ -}}
+{{- $bib := site.Data.bibliography -}}
+{{- $mode := .Get 0 | default "cited" -}}
+{{- $keys := slice -}}
+{{- if eq $mode "all" -}}
+    {{- range $bib -}}{{- $keys = $keys | append .id -}}{{- end -}}
+{{- else -}}
+    {{- $keys = .Page.Scratch.Get "cited" | default slice -}}
+{{- end -}}
+{{- $seen := dict -}}
+<section class="bibliography">
+<h2>References</h2>
+<ol class="bibliography-list">
+{{- range $keys -}}
+    {{- $key := . -}}
+    {{- if not (index $seen $key) -}}
+        {{- $seen = merge $seen (dict $key true) -}}
+        {{- $entry := where $bib "id" $key | first 1 -}}
+        {{- if $entry -}}
+            {{- $e := index $entry 0 -}}
+            <li id="ref-{{ $key }}">
+                {{- /* authors: "Ho, J., Jain, A., & Abbeel, P." */ -}}
+                {{- $authors := $e.author -}}
+                {{- $nauth := len $authors -}}
+                {{- range $i, $a := $authors -}}
+                    {{- if $i -}}{{- if eq $i (sub $nauth 1) }}, &amp; {{ else }}, {{ end -}}{{- end -}}
+                    {{- $a.family -}}{{- with $a.given }}, {{ slicestr . 0 1 }}.{{- end -}}
+                {{- end -}}
+                {{- /* year */ -}}
+                {{- with $e.issued -}}{{- with index . "date-parts" }} ({{ index (index . 0) 0 }}).{{- end -}}{{- end }}
+                {{ with $e.title }}<span class="bib-title">{{ . | safeHTML }}</span>.{{ end }}
+                {{- with index $e "container-title" }} <em>{{ . }}</em>{{- end -}}
+                {{- with $e.volume }}, <em>{{ . }}</em>{{- end -}}
+                {{- with $e.issue }}({{ . }}){{- end -}}
+                {{- with $e.page }}, {{ . }}{{- end -}}.
+                {{- with $e.DOI }} <a href="https://doi.org/{{ . }}">https://doi.org/{{ . }}</a>{{- end -}}
+                {{- with $e.URL }} <a href="{{ . }}">{{ . }}</a>{{- end -}}
+            </li>
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+</ol>
+</section>

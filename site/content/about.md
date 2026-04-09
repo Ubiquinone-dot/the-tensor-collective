@@ -8,7 +8,7 @@ layout: "about"
 
 searchHidden: true
 
-date: 2023-11-16:30:03+00:00
+date: 2023-11-16T16:30:03+00:00
 author: ["Jasper Butcher"]
 
 ---

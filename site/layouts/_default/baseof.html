@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="{{ site.Language.Lang }}" dir="{{ site.Language.LanguageDirection | default "ltr" }}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
+  {{ with .Description }}<meta name="description" content="{{ . }}" />{{ end }}
+
+  {{/* Fonts */}}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  {{/* Favicon */}}
+  {{ with site.Params.assets.favicon }}<link rel="icon" href="{{ . | relURL }}" />{{ end }}
+
+  {{/* Custom CSS */}}
+  {{ $css := resources.Get "css/tensor-collective.css" | resources.Minify | resources.Fingerprint }}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" />
+
+  {{/* Dark mode flash prevention */}}
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem("pref-theme");
+        if (t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch(e) {}
+    })();
+  </script>
+</head>
+<body>
+  {{ partial "header.html" . }}
+  <main>
+    {{ block "main" . }}{{ end }}
+  </main>
+  {{ partial "footer.html" . }}
+  {{ partial "mathjax.html" . }}
+  <script>
+    // Theme toggle
+    var toggle = document.getElementById("theme-toggle");
+    if (toggle) {
+      toggle.addEventListener("click", function(){
+        document.documentElement.classList.toggle("dark");
+        try {
+          localStorage.setItem("pref-theme", document.documentElement.classList.contains("dark") ? "dark" : "light");
+        } catch(e) {}
+      });
+    }
+  </script>
+</body>
+</html>

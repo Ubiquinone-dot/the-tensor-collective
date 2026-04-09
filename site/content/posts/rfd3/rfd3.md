@@ -1,6 +1,6 @@
 ---
 title: "On building diffusion models"
-date: 2025-09-19T14:37+00:00
+date: 2025-09-19T14:37:00+00:00
 author: ["Jasper Butcher"]
 
 searchHidden: false
@@ -22,7 +22,7 @@ draft: false
 BioRXiv DOI [https://doi.org/10.1101/2025.08.14.670328](https://www.biorxiv.org/content/10.1101/2025.09.18.676967v1) | Summary on [X](https://x.com/butcher_jasper/status/1968900323071713320)
 
 ## Introduction
-As of the time of writing, we've just released RFdiffusion3's preprint. A component I often feel is missing from papers is the journey that went on behind the scenes. I went into the field of building models 3 years ago completely blind, and would've loved to know what it looks like on the inside. With this article, I wanted to share to share some of the experiences we had, and how this project changed the way I thought about building generative models to solve real world problems.
+As of the time of writing, we've just released RFdiffusion3's preprint {{< cite "butcher2025rfdiffusion3" >}}. A component I often feel is missing from papers is the journey that went on behind the scenes. I went into the field of building models 3 years ago completely blind, and would've loved to know what it looks like on the inside. With this article, I wanted to share to share some of the experiences we had, and how this project changed the way I thought about building generative models to solve real world problems.
 
 ### Hallucination and my early attempts at active site scaffolding
 
@@ -79,3 +79,5 @@ RFD3 became easy to work with for enzyme design because it was no longer two dif
 20 Sep 2025
 
 {{< figure src="/posts/rfd3/codiffusion.gif" caption="Co-diffusion of active site and ligand with RFdiffusion3." >}}
+
+{{< bibliography >}}

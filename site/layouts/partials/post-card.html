@@ -1,0 +1,38 @@
+{{- $cover := "" -}}
+{{- with .Params.cover.image -}}
+  {{- $raw := . -}}
+  {{- if or (strings.HasPrefix $raw "http") (strings.HasPrefix $raw "/") -}}
+    {{- $cover = $raw -}}
+  {{- else -}}
+    {{- /* try page resource first, then fall back to /static */ -}}
+    {{- with $.Resources.GetMatch $raw -}}
+      {{- $cover = .RelPermalink -}}
+    {{- else -}}
+      {{- $cover = printf "/%s" $raw -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<a class="post-card" href="{{ .RelPermalink }}">
+  <div class="post-card-inner">
+    {{ with $cover }}
+    <div class="post-card-thumb">
+      <img src="{{ . }}" alt="{{ $.Title }}" loading="lazy" />
+    </div>
+    {{ end }}
+    <div class="post-card-body">
+      <h3 class="post-card-title">{{ .Title }}</h3>
+      {{ with .Description }}<p class="post-card-excerpt">{{ . }}</p>{{ end }}
+      <div class="post-card-meta">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{ .ReadingTime }} min read
+        </span>
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          {{ with .Params.author }}{{ index . 0 }}{{ else }}{{ site.Params.author | default "Jasper Butcher" }}{{ end }}
+        </span>
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+      </div>
+    </div>
+  </div>
+</a>

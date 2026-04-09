@@ -1,0 +1,226 @@
+[
+  {
+    "author": [
+      {
+        "family": "Ho",
+        "given": "Jonathan"
+      },
+      {
+        "family": "Jain",
+        "given": "Ajay"
+      },
+      {
+        "family": "Abbeel",
+        "given": "Pieter"
+      }
+    ],
+    "container-title": "Advances in Neural Information Processing Systems",
+    "id": "ho2020denoising",
+    "issued": {
+      "date-parts": [
+        [
+          2020
+        ]
+      ]
+    },
+    "page": "6840-6851",
+    "title": "Denoising diffusion probabilistic models",
+    "type": "article-journal",
+    "volume": "33"
+  },
+  {
+    "DOI": "10.1038/s41586-023-06415-8",
+    "author": [
+      {
+        "family": "Watson",
+        "given": "Joseph L"
+      },
+      {
+        "family": "Juergens",
+        "given": "David"
+      },
+      {
+        "family": "Bennett",
+        "given": "Nathaniel R"
+      },
+      {
+        "family": "Trippe",
+        "given": "Brian L"
+      },
+      {
+        "family": "Yim",
+        "given": "Jason"
+      },
+      {
+        "family": "Eisenach",
+        "given": "Helen E"
+      },
+      {
+        "family": "Ahern",
+        "given": "Woody"
+      },
+      {
+        "family": "Borst",
+        "given": "Andrew J"
+      },
+      {
+        "family": "Ragotte",
+        "given": "Robert J"
+      },
+      {
+        "family": "Milles",
+        "given": "Lukas F"
+      },
+      {
+        "literal": "others"
+      }
+    ],
+    "container-title": "Nature",
+    "id": "watson2023rfdiffusion",
+    "issue": "7976",
+    "issued": {
+      "date-parts": [
+        [
+          2023
+        ]
+      ]
+    },
+    "page": "1089-1100",
+    "publisher": "Nature Publishing Group",
+    "title": "De novo design of protein structure and function with RFdiffusion",
+    "type": "article-journal",
+    "volume": "620"
+  },
+  {
+    "author": [
+      {
+        "family": "Anand",
+        "given": "Namrata"
+      },
+      {
+        "family": "Achim",
+        "given": "Tudor"
+      }
+    ],
+    "container-title": "arXiv preprint arXiv:2205.15019",
+    "id": "anand2022protein",
+    "issued": {
+      "date-parts": [
+        [
+          2022
+        ]
+      ]
+    },
+    "title": "Protein structure and sequence generation with equivariant denoising diffusion probabilistic models",
+    "type": "article-journal"
+  },
+  {
+    "DOI": "10.1101/2025.09.18.676967",
+    "URL": "https://doi.org/10.1101/2025.09.18.676967",
+    "author": [
+      {
+        "family": "Butcher",
+        "given": "Jasper"
+      },
+      {
+        "family": "Krishna",
+        "given": "Rohith"
+      },
+      {
+        "family": "Mitra",
+        "given": "Raktim"
+      },
+      {
+        "family": "Brent",
+        "given": "Rafael I."
+      },
+      {
+        "family": "Li",
+        "given": "Yanjing"
+      },
+      {
+        "family": "Corley",
+        "given": "Nathaniel"
+      },
+      {
+        "family": "Kim",
+        "given": "Paul"
+      },
+      {
+        "family": "Funk",
+        "given": "Jonathan"
+      },
+      {
+        "family": "Mathis",
+        "given": "Simon"
+      },
+      {
+        "family": "Salike",
+        "given": "Saman"
+      },
+      {
+        "family": "Muraishi",
+        "given": "Aiko"
+      },
+      {
+        "family": "Eisenach",
+        "given": "Helen"
+      },
+      {
+        "family": "Thompson",
+        "given": "Tuscan Rock"
+      },
+      {
+        "family": "Chen",
+        "given": "Jie"
+      },
+      {
+        "family": "Politanska",
+        "given": "Yuliya"
+      },
+      {
+        "family": "Sehgal",
+        "given": "Enisha"
+      },
+      {
+        "family": "Coventry",
+        "given": "Brian"
+      },
+      {
+        "family": "Zhang",
+        "given": "Odin"
+      },
+      {
+        "family": "Qiang",
+        "given": "Bo"
+      },
+      {
+        "family": "Didi",
+        "given": "Kieran"
+      },
+      {
+        "family": "Kazman",
+        "given": "Max"
+      },
+      {
+        "family": "DiMaio",
+        "given": "Frank"
+      },
+      {
+        "family": "Baker",
+        "given": "David"
+      }
+    ],
+    "container-title": "bioRxiv",
+    "id": "butcher2025rfdiffusion3",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "title": "De novo design of all-atom biomolecular interactions with RFdiffusion3",
+    "type": "article-journal"
+  }
+]

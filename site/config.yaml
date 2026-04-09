@@ -59,6 +59,17 @@ params:
 # MD to HTML settings
 markup:
   defaultMarkdownHandler: goldmark
+  goldmark:
+    extensions:
+      passthrough:
+        enable: true
+        delimiters:
+          block:
+            - ["\\[", "\\]"]
+            - ["$$", "$$"]
+          inline:
+            - ["\\(", "\\)"]
+            - ["$", "$"]
   highlight:
     # anchorLineNos: true
     codeFences: true

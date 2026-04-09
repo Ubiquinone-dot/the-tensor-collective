@@ -1,0 +1,36 @@
+{{- /*
+  Inline citation: {{< cite "bibkey" >}} or {{< cite "key1,key2" >}}
+  Renders [Author, Year] linked to the bibliography entry.
+  Records each key in .Page.Scratch under "cited" so the {{< bibliography >}}
+  shortcode at the bottom of the post can render only what was actually cited.
+*/ -}}
+{{- $keys := split (.Get 0) "," -}}
+{{- $bib := site.Data.bibliography -}}
+{{- $cited := .Page.Scratch.Get "cited" | default slice -}}
+[{{- range $i, $rawKey := $keys -}}
+    {{- $key := trim $rawKey " " -}}
+    {{- $entry := where $bib "id" $key | first 1 -}}
+    {{- if $entry -}}
+        {{- $e := index $entry 0 -}}
+        {{- $cited = $cited | append $key -}}
+        {{- $author := "" -}}
+        {{- with $e.author -}}
+            {{- $first := index . 0 -}}
+            {{- if gt (len .) 2 -}}
+                {{- $author = printf "%s et al." $first.family -}}
+            {{- else if eq (len .) 2 -}}
+                {{- $second := index . 1 -}}
+                {{- $author = printf "%s & %s" $first.family $second.family -}}
+            {{- else -}}
+                {{- $author = $first.family -}}
+            {{- end -}}
+        {{- end -}}
+        {{- $year := "" -}}
+        {{- with $e.issued -}}{{- with index . "date-parts" -}}{{- $year = index (index . 0) 0 -}}{{- end -}}{{- end -}}
+        {{- if $i }}; {{ end -}}
+        <a href="#ref-{{ $key }}" class="citation">{{ $author }}, {{ $year }}</a>
+    {{- else -}}
+        <span class="citation citation-missing" title="Missing bib entry: {{ $key }}">[?{{ $key }}]</span>
+    {{- end -}}
+{{- end -}}]
+{{- .Page.Scratch.Set "cited" $cited -}}
