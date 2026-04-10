@@ -32,7 +32,7 @@ I became interested in the problem of active site scaffolding, being a chemist w
 
 The approach I worked on (figure **1**) would, at every iteration, insert the nearest inverse rotamer to the active site tipatoms. It would, in theory, allow you to start from a minimal specification of an active site without telling the model where the active site residues belong to, and it would figure out the optimal location throughout the trajectory.
 
-{{< figure src="/posts/rfd3/inverse_rotamer_design.png" caption="Inverse rotamer design with hallucination diagram" >}}
+{{< figure src="inverse_rotamer_design.png" caption="Inverse rotamer design with hallucination diagram" >}}
 
 This worked reasonably well, but was admittedly a hacky solution to a hard problem and hallucination was quickly superseeded by the development of RFdiffusion(1).
 
@@ -45,7 +45,7 @@ This was a huge innovation in *de novo* protein design, especially enzyme design
 
 One key limitaiton of RFD2 was that it had to use multiple diffusion tracks to unindex a tipatom. Diffusion was learnt through a backbone track $x_t$ and a sidechain track $s_t$ (attached to the tipatom conditions of known residue identity $c$) (figure **2**a). This meant, in order for $s_t$ to find it's index in $x_t$, two diffusive processed had to converge and join up to make the full all-atom structure; $x_t$ and $s_t$ (figure **2**b).
 
-{{< figure src="/posts/rfd3/rfd2.png" caption="Diagram from Butcher et al. 2025, BioRXiv" >}}
+{{< figure src="rfd2.png" caption="Diagram from Butcher et al. 2025, BioRXiv" >}}
 
 ### AlphaFold3 and the "fold" in RFdiffusion
 Both RFD1 and RFD2 were forged from their respective protein folding architectures (RosetTTAFold and RF2AA). With RFD3 we built on the code for RF3 - consisting primarily of the AlphaFold3 architecture. AF3 introduced all-atom diffusion in a novel way, and did so without using **frames** or **equivariance**, two components which signifcantly increased the complexity of previous models.
@@ -78,6 +78,6 @@ RFD3 became easy to work with for enzyme design because it was no longer two dif
 -Jasper,
 20 Sep 2025
 
-{{< figure src="/posts/rfd3/codiffusion.gif" caption="Co-diffusion of active site and ligand with RFdiffusion3." >}}
+{{< figure src="codiffusion.gif" caption="Co-diffusion of active site and ligand with RFdiffusion3." >}}
 
 {{< bibliography >}}
