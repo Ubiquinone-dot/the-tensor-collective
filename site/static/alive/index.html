@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Denoise — alive</title>
+<style>
+  :root{ --bg:#efe8db; --paper:#f6f1e7; --ink:#1a1712; --mut:#5d574d; --teal:#1c8273; --teal-bright:#136b5e; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; }
+  /* embed: transparent so the host page's bg (light/dark) shows through the iframe */
+  body{ background:transparent; color:var(--ink); font:16px/1.55 "Helvetica Neue",Helvetica,Arial,sans-serif; overflow:hidden; cursor:crosshair; }
+  #c{ display:block; width:100%; height:100%; position:fixed; inset:0; }
+
+  /* embed: control panel hidden — the piece auto-runs with tuned defaults */
+  #panel{ display:none; position:absolute; top:12px; right:12px; width:228px; background:var(--paper);
+    border:1px solid rgba(26,23,18,.12); border-radius:10px; padding:12px 14px;
+    box-shadow:0 6px 30px rgba(26,23,18,.10);
+    font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; font-size:12px; user-select:none; }
+  #panel h1{ font:600 11px/1.2 "IBM Plex Mono",monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--mut); margin:0 0 6px; }
+  .row{ margin:8px 0; }
+  .row label{ display:flex; justify-content:space-between; color:var(--mut); margin-bottom:4px; }
+  .row label b{ color:var(--ink); font-weight:600; }
+  input[type=range]{ width:100%; accent-color:var(--teal); }
+  #collapse{ position:absolute; top:10px; right:12px; cursor:pointer; color:var(--mut); background:none; border:0; font-size:14px; }
+  #panel.min .body{ display:none; }
+  .toggle{ display:flex; align-items:center; gap:8px; color:var(--mut); cursor:pointer; margin:10px 0 2px; }
+  .toggle input{ accent-color:var(--teal); }
+</style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+      <div id="panel" class="min">
+        <button id="collapse" title="collapse">+</button>
+        <h1>alive</h1>
+        <div class="body">
+          <div class="row"><label>breath amt <b id="vbAmt">0.020</b></label>
+            <input id="bAmt" type="range" min="0" max="0.04" step="0.002" value="0.02" /></div>
+          <div class="row"><label>breath period <b id="vbPer">13</b>s</label>
+            <input id="bPer" type="range" min="4" max="22" step="1" value="13" /></div>
+          <div class="row"><label>ambient <b id="vamb">0.50</b></label>
+            <input id="amb" type="range" min="0.1" max="0.9" step="0.01" value="0.50" /></div>
+          <div class="row"><label>cluster size <b id="vambR">0.60</b></label>
+            <input id="ambR" type="range" min="0.2" max="1.0" step="0.02" value="0.60" /></div>
+          <div class="row"><label>ambient speed <b id="vambS">0.25</b></label>
+            <input id="ambS" type="range" min="0.06" max="0.66" step="0.01" value="0.25" /></div>
+          <div class="row"><label>hover strength <b id="vhStr">0.08</b></label>
+            <input id="hStr" type="range" min="0.02" max="0.14" step="0.01" value="0.08" /></div>
+          <div class="row"><label>hover radius <b id="vhRad">60</b>px</label>
+            <input id="hRad" type="range" min="20" max="100" step="5" value="60" /></div>
+          <div class="row"><label>hover speed <b id="vhSpd">0.05</b>/s</label>
+            <input id="hSpd" type="range" min="0.02" max="0.76" step="0.01" value="0.05" /></div>
+          <div class="row"><label>max blob size <b id="vmax">20</b>px</label>
+            <input id="maxPx" type="range" min="8" max="32" step="1" value="20" /></div>
+          <div class="row"><label>circle radius <b id="vrs">0.85</b></label>
+            <input id="rs" type="range" min="0.4" max="1.3" step="0.05" value="0.85" /></div>
+          <label class="toggle"><input id="split" type="checkbox" checked /> hover splits apart (vs merges)</label>
+        </div>
+      </div>
+
+<script>
+const DATA_URL = "data/2_hydrolase.alive.json";   // coarse (roots=2, balanced) -> big blobs
+let RS = 0.85;
+
+const cv = document.getElementById("c");
+const ctx = cv.getContext("2d");
+let D=null, view=null, leaves=[], parent=null, birth=null, pdur=null, frameMark=null, fc=0, charge=null;
+
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const ui={};
+["bAmt","vbAmt","bPer","vbPer","amb","vamb","ambR","vambR","ambS","vambS",
+ "hStr","vhStr","hRad","vhRad","hSpd","vhSpd","maxPx","vmax","rs","vrs","split"].forEach(id=>ui[id]=document.getElementById(id));
+
+function lerp(a,b,t){ return a+(b-a)*t; }
+function clamp01(t){ return t<0?0:t>1?1:t; }
+function smoothstep(a,b,x){ const t=clamp01((x-a)/(b-a)); return t*t*(3-2*t); }
+
+function cw(){ return cv.clientWidth; }
+function ch(){ return cv.clientHeight; }
+
+function resize(){
+  const dpr=Math.min(devicePixelRatio||1,2);
+  cv.width=cw()*dpr; cv.height=ch()*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  computeView();
+}
+function computeView(){
+  if(!D) return;
+  const {w,h}=D.bounds, pad=0.08, W=cw(), H=ch();
+  const s=Math.min(W*(1-2*pad)/w, H*(1-2*pad)/h);
+  view={ s, ox:(W - s*w)/2, oy:(H - s*h)/2 };
+}
+const X=x=>view.ox + x*view.s;
+const Y=y=>view.oy + y*view.s;
+const R=r=>r*view.s;
+
+function precompute(){
+  const N=D.nodes, n=N.length;
+  parent=new Int32Array(n).fill(-1);
+  birth=new Float32Array(n);
+  pdur=new Float32Array(n);
+  frameMark=new Int32Array(n).fill(-1);
+  leaves=[];
+  for(let i=0;i<n;i++){
+    const nd=N[i];
+    if(nd.ch){ for(const ci of nd.ch){ parent[ci]=i; birth[ci]=nd.s; pdur[ci]=nd.d||0.05; } }
+    else leaves.push(i);
+  }
+  charge=new Float32Array(leaves.length);
+}
+
+// --- mouse (eased position; presence), relative to the canvas box ---
+let mxS=-1e4, myS=-1e4;
+let mTargetX=-1e4, mTargetY=-1e4, mInside=false;
+function setM(e){ const r=cv.getBoundingClientRect(); mTargetX=e.clientX-r.left; mTargetY=e.clientY-r.top; mInside=true; }
+cv.addEventListener("mousemove",setM);
+cv.addEventListener("mouseenter",setM);
+cv.addEventListener("mouseleave",()=>{ mInside=false; });
+
+function renderNode(id,q){
+  const N=D.nodes, nd=N[id];
+  let x=nd.x, y=nd.y, r=nd.r, a=1, R0=nd.c[0],G0=nd.c[1],B0=nd.c[2];
+  const par=parent[id], b=birth[id];
+  if(par>=0){
+    const dur=pdur[id]||0.05;
+    const e=clamp01((q-b)/dur);
+    if(e<1){
+      const P=N[par], eS=smoothstep(0,1,e);
+      x=lerp(P.x,nd.x,eS); y=lerp(P.y,nd.y,eS);
+      r=lerp(P.r*0.72,nd.r,eS);
+      R0=lerp(P.c[0],nd.c[0],eS); G0=lerp(P.c[1],nd.c[1],eS); B0=lerp(P.c[2],nd.c[2],eS);
+      a=0.35+0.65*eS;
+    }
+  }
+  let pr=R(r)*RS; if(pr<0.35) pr=0.35;
+  ctx.beginPath(); ctx.arc(X(x),Y(y),pr,0,6.2832);
+  ctx.fillStyle=`rgba(${R0|0},${G0|0},${B0|0},${a})`; ctx.fill();
+}
+
+let lastT=0;
+function draw(T){
+  const W=cw(), H=ch();
+  ctx.clearRect(0,0,W,H);
+  if(!D) return;
+  RS = parseFloat(ui.rs.value);
+  const dt = lastT ? Math.min(T-lastT,0.1) : 0; lastT=T;
+
+  mxS=lerp(mxS,mTargetX,0.25); myS=lerp(myS,mTargetY,0.25);
+
+  const bAmt=parseFloat(ui.bAmt.value), bPer=parseFloat(ui.bPer.value);
+  const breath = bAmt*(0.5-0.5*Math.cos(6.2832*T/bPer));
+  const qG = 1 - breath;
+
+  const amb=parseFloat(ui.amb.value), aS=parseFloat(ui.ambS.value);
+  const cx=W/2, cy=H/2;
+  const Rx=W*0.30, Ry=H*0.30;
+  const minDim=Math.min(W,H);
+  const ambSig=minDim*parseFloat(ui.ambR.value), ambDen=2*ambSig*ambSig;
+  const pulse=(ph)=>{ const u=0.5+0.5*Math.sin(T*0.9*aS+ph); return u*u; };
+  const drifters=[
+    { x:cx+Rx*Math.sin(T*1.0*aS+0.0), y:cy+Ry*Math.sin(T*1.3*aS+1.3), den:ambDen, str:amb*pulse(0.0) },
+    { x:cx+Rx*Math.sin(T*0.7*aS+2.6), y:cy+Ry*Math.sin(T*0.9*aS+4.0), den:ambDen, str:amb*pulse(3.1) },
+  ];
+
+  const hStrT = mInside ? parseFloat(ui.hStr.value) : 0;
+  const hRad=parseFloat(ui.hRad.value), hDen=2*hRad*hRad;
+  const maxStep = parseFloat(ui.hSpd.value)*dt;
+  const maxNodeR = parseFloat(ui.maxPx.value)/(view.s*RS);
+  const split = ui.split.checked;
+  const hStrV = parseFloat(ui.hStr.value) || 1;
+
+  fc++;
+  const N=D.nodes, pairs=[];
+  for(let k=0;k<leaves.length;k++){
+    const li=leaves[k], nd=N[li], sx=X(nd.x), sy=Y(nd.y);
+    let ambF=0;
+    for(const d of drifters){ const dx=sx-d.x,dy=sy-d.y; ambF+=d.str*Math.exp(-(dx*dx+dy*dy)/d.den); }
+    let ht=0;
+    if(hStrT>0.002){ const dx=sx-mxS,dy=sy-myS; ht=hStrT*Math.exp(-(dx*dx+dy*dy)/hDen); }
+    let c=charge[k]; const dl=ht-c; c += dl>maxStep?maxStep:(dl<-maxStep?-maxStep:dl); charge[k]=c;
+
+    let q;
+    if(split){
+      // smooth push-back: suppress the ambient merge most at the centre and ease
+      // it back in with distance (smoothstep), never fully -> no clean hard edge
+      const sup=c/hStrV;                 // 0..1 (gaussian in space, ramped in time)
+      const soft=sup*sup*(3-2*sup);
+      q=qG-ambF*(1-0.85*soft);
+    } else {
+      q=qG-ambF-c;                       // charge lowers q -> merge into blobs
+    }
+    if(q<0)q=0; else if(q>1)q=1;
+    let id=li;
+    while(parent[id]>=0 && q<birth[id] && N[parent[id]].r<=maxNodeR) id=parent[id];
+    if(frameMark[id]!==fc){ frameMark[id]=fc; pairs.push([id,q]); }
+  }
+  pairs.sort((a,b)=>N[b[0]].r-N[a[0]].r);
+  for(const [id,q] of pairs) renderNode(id,q);
+}
+
+let t0=0;
+function tick(now){ if(!t0) t0=now; draw((now-t0)/1000); requestAnimationFrame(tick); }
+
+const bind=(el,out,f)=>{ const g=()=>out.textContent=f(el.value); el.oninput=g; g(); };
+bind(ui.bAmt,ui.vbAmt,v=>(+v).toFixed(3));
+bind(ui.bPer,ui.vbPer,v=>(+v).toFixed(0));
+bind(ui.amb,ui.vamb,v=>(+v).toFixed(2));
+bind(ui.ambR,ui.vambR,v=>(+v).toFixed(2));
+bind(ui.ambS,ui.vambS,v=>(+v).toFixed(2));
+bind(ui.hStr,ui.vhStr,v=>(+v).toFixed(2));
+bind(ui.hRad,ui.vhRad,v=>(+v).toFixed(0));
+bind(ui.hSpd,ui.vhSpd,v=>(+v).toFixed(2));
+bind(ui.maxPx,ui.vmax,v=>(+v).toFixed(0));
+bind(ui.rs,ui.vrs,v=>(+v).toFixed(2));
+document.getElementById("collapse").onclick=e=>{ const p=document.getElementById("panel"); p.classList.toggle("min"); e.target.textContent=p.classList.contains("min")?"+":"–"; };
+
+fetch(DATA_URL+"?v=6").then(r=>r.json()).then(d=>{
+  D=d; precompute(); resize();
+  if(reduced){ draw(0); } else requestAnimationFrame(tick);
+}).catch(err=>{
+  cv.insertAdjacentHTML("afterend",
+   `<pre style="position:absolute;left:16px;top:16px;color:#c05549">Failed to load ${DATA_URL}\n${err}\nServe over http.</pre>`);
+});
+if(window.ResizeObserver){ new ResizeObserver(resize).observe(cv); }
+addEventListener("resize",resize);
+</script>
+</body>
+</html>

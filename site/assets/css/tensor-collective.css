@@ -199,6 +199,32 @@ img, video { max-width: 100%; height: auto; }
   border-radius: var(--radius);
 }
 .pill:hover { opacity: 1; background: var(--background); border-color: var(--primary); color: var(--primary); }
+
+/* ---- Living design (alive hydrolase) ---- */
+.alive-section { padding-top: 0; }
+.alive-rule {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0 0 2rem;
+}
+.alive-frame {
+  margin: 0;
+  border: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: transparent;      /* iframe is transparent → host page bg shows (light/dark) */
+  line-height: 0;
+}
+.alive-frame iframe {
+  display: block;
+  width: 100%;
+  height: 420px;
+  border: 0;
+  background: transparent;
+}
+@media (max-width: 560px) {
+  .alive-frame iframe { height: 320px; }
+}
 .pill svg { width: 16px; height: 16px; }
 
 /* ---- Post list section ---- */
