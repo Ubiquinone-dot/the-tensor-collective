@@ -9,10 +9,10 @@
   *{ box-sizing:border-box; }
   html,body{ margin:0; height:100%; }
   /* embed: transparent so the host page's bg (light/dark) shows through the iframe */
-  body{ background:transparent; color:var(--ink); font:16px/1.55 "Helvetica Neue",Helvetica,Arial,sans-serif; overflow:hidden; cursor:crosshair; }
-  #c{ display:block; width:100%; height:100%; position:fixed; inset:0; }
+  body{ background:transparent; color:var(--ink); font:16px/1.55 "Helvetica Neue",Helvetica,Arial,sans-serif; overflow:hidden; }
+  #c{ display:block; width:100%; height:100%; position:fixed; inset:0; touch-action:pan-y; }
 
-  /* embed: control panel hidden — the piece auto-runs with tuned defaults */
+  /* embed: control panel hidden unless ?tune — the piece auto-runs with tuned defaults */
   #panel{ display:none; position:absolute; top:12px; right:12px; width:228px; background:var(--paper);
     border:1px solid rgba(26,23,18,.12); border-radius:10px; padding:12px 14px;
     box-shadow:0 6px 30px rgba(26,23,18,.10);
@@ -26,6 +26,7 @@
   #panel.min .body{ display:none; }
   .toggle{ display:flex; align-items:center; gap:8px; color:var(--mut); cursor:pointer; margin:10px 0 2px; }
   .toggle input{ accent-color:var(--teal); }
+  body.tune #panel{ display:block; }
 </style>
 </head>
 <body>
@@ -36,20 +37,20 @@
         <div class="body">
           <div class="row"><label>breath amt <b id="vbAmt">0.020</b></label>
             <input id="bAmt" type="range" min="0" max="0.04" step="0.002" value="0.02" /></div>
-          <div class="row"><label>breath period <b id="vbPer">13</b>s</label>
-            <input id="bPer" type="range" min="4" max="22" step="1" value="13" /></div>
+          <div class="row"><label>breath period <b id="vbPer">9</b>s</label>
+            <input id="bPer" type="range" min="4" max="22" step="1" value="9" /></div>
           <div class="row"><label>ambient <b id="vamb">0.50</b></label>
             <input id="amb" type="range" min="0.1" max="0.9" step="0.01" value="0.50" /></div>
           <div class="row"><label>cluster size <b id="vambR">0.60</b></label>
             <input id="ambR" type="range" min="0.2" max="1.0" step="0.02" value="0.60" /></div>
-          <div class="row"><label>ambient speed <b id="vambS">0.25</b></label>
-            <input id="ambS" type="range" min="0.06" max="0.66" step="0.01" value="0.25" /></div>
+          <div class="row"><label>ambient speed <b id="vambS">0.40</b></label>
+            <input id="ambS" type="range" min="0.06" max="0.66" step="0.01" value="0.40" /></div>
           <div class="row"><label>hover strength <b id="vhStr">0.08</b></label>
             <input id="hStr" type="range" min="0.02" max="0.14" step="0.01" value="0.08" /></div>
           <div class="row"><label>hover radius <b id="vhRad">60</b>px</label>
             <input id="hRad" type="range" min="20" max="100" step="5" value="60" /></div>
-          <div class="row"><label>hover speed <b id="vhSpd">0.05</b>/s</label>
-            <input id="hSpd" type="range" min="0.02" max="0.76" step="0.01" value="0.05" /></div>
+          <div class="row"><label>hover response <b id="vhSpd">0.20</b>s</label>
+            <input id="hSpd" type="range" min="0.05" max="1.5" step="0.05" value="0.2" /></div>
           <div class="row"><label>max blob size <b id="vmax">20</b>px</label>
             <input id="maxPx" type="range" min="8" max="32" step="1" value="20" /></div>
           <div class="row"><label>circle radius <b id="vrs">0.85</b></label>
@@ -60,21 +61,28 @@
 
 <script>
 const DATA_URL = "data/2_hydrolase.alive.json";   // coarse (roots=2, balanced) -> big blobs
-let RS = 0.85;
 
 const cv = document.getElementById("c");
 const ctx = cv.getContext("2d");
-let D=null, view=null, leaves=[], parent=null, birth=null, pdur=null, frameMark=null, fc=0, charge=null;
+let D=null, view=null, leaves=[], parent=null, charge=null;
+let qLeaf=null, repLeaf=null, forced=null, css=null;
+let sX,sY,sR,sCol,sFinal;                            // per-frame render state of each node
 
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (/[?&]tune\b/.test(location.search)) document.body.classList.add("tune");
 
 const ui={};
 ["bAmt","vbAmt","bPer","vbPer","amb","vamb","ambR","vambR","ambS","vambS",
  "hStr","vhStr","hRad","vhRad","hSpd","vhSpd","maxPx","vmax","rs","vrs","split"].forEach(id=>ui[id]=document.getElementById(id));
+const P={};
+function readParams(){
+  for (const k of ["bAmt","bPer","amb","ambR","ambS","hStr","hRad","hSpd","maxPx","rs"]) P[k]=parseFloat(ui[k].value);
+  P.split=ui.split.checked;
+}
 
 function lerp(a,b,t){ return a+(b-a)*t; }
 function clamp01(t){ return t<0?0:t>1?1:t; }
-function smoothstep(a,b,x){ const t=clamp01((x-a)/(b-a)); return t*t*(3-2*t); }
+function ease(t){ return t*t*(3-2*t); }
 
 function cw(){ return cv.clientWidth; }
 function ch(){ return cv.clientHeight; }
@@ -84,125 +92,180 @@ function resize(){
   cv.width=cw()*dpr; cv.height=ch()*dpr;
   ctx.setTransform(dpr,0,0,dpr,0,0);
   computeView();
+  if(reduced && D) draw(0);
 }
 function computeView(){
   if(!D) return;
   const {w,h}=D.bounds, pad=0.08, W=cw(), H=ch();
   const s=Math.min(W*(1-2*pad)/w, H*(1-2*pad)/h);
   view={ s, ox:(W - s*w)/2, oy:(H - s*h)/2 };
+  computeFloors();
 }
 const X=x=>view.ox + x*view.s;
 const Y=y=>view.oy + y*view.s;
-const R=r=>r*view.s;
 
 function precompute(){
   const N=D.nodes, n=N.length;
   parent=new Int32Array(n).fill(-1);
-  birth=new Float32Array(n);
-  pdur=new Float32Array(n);
-  frameMark=new Int32Array(n).fill(-1);
+  repLeaf=new Int32Array(n).fill(-1);
+  forced=new Uint8Array(n);
+  sX=new Float32Array(n); sY=new Float32Array(n); sR=new Float32Array(n);
+  sCol=new Float32Array(n*3); sFinal=new Uint8Array(n);
+  css=new Array(n);
   leaves=[];
   for(let i=0;i<n;i++){
     const nd=N[i];
-    if(nd.ch){ for(const ci of nd.ch){ parent[ci]=i; birth[ci]=nd.s; pdur[ci]=nd.d||0.05; } }
-    else leaves.push(i);
+    css[i]=`rgb(${nd.c[0]|0},${nd.c[1]|0},${nd.c[2]|0})`;
+    if(nd.ch){ for(const ci of nd.ch) parent[ci]=i; }
+    else { repLeaf[i]=leaves.length; leaves.push(i); }
   }
+  // Each internal node takes its merge level from the descendant leaf nearest its centre
+  // (children precede parents in the node list, so one ascending pass suffices).
+  for(let i=0;i<n;i++){
+    const nd=N[i]; if(!nd.ch) continue;
+    let best=-1, bd=Infinity;
+    for(const ci of nd.ch){
+      const L=N[leaves[repLeaf[ci]]], dx=L.x-nd.x, dy=L.y-nd.y, d=dx*dx+dy*dy;
+      if(d<bd){ bd=d; best=repLeaf[ci]; }
+    }
+    repLeaf[i]=best;
+  }
+  roots=D.roots.slice();
   charge=new Float32Array(leaves.length);
+  qLeaf=new Float32Array(leaves.length);
+}
+let roots=[];
+
+// Nodes larger than the max blob size never render merged: they are always split.
+function computeFloors(){
+  if(!D || !view) return;
+  const N=D.nodes, maxNodeR=P.maxPx/(view.s*P.rs);
+  for(let i=0;i<N.length;i++) forced[i] = N[i].ch && N[i].r>maxNodeR ? 1 : 0;
 }
 
-// --- mouse (eased position; presence), relative to the canvas box ---
-let mxS=-1e4, myS=-1e4;
-let mTargetX=-1e4, mTargetY=-1e4, mInside=false;
-function setM(e){ const r=cv.getBoundingClientRect(); mTargetX=e.clientX-r.left; mTargetY=e.clientY-r.top; mInside=true; }
-cv.addEventListener("mousemove",setM);
-cv.addEventListener("mouseenter",setM);
-cv.addEventListener("mouseleave",()=>{ mInside=false; });
+// --- pointer (eased position; presence), relative to the canvas box ---
+let mxS=0, myS=0, mTargetX=0, mTargetY=0, mInside=false;
+function setM(e){
+  const r=cv.getBoundingClientRect();
+  mTargetX=e.clientX-r.left; mTargetY=e.clientY-r.top;
+  if(!mInside){ mxS=mTargetX; myS=mTargetY; }       // snap on entry: no sweep in from off-canvas
+  mInside=true;
+}
+const leave=()=>{ mInside=false; };
+cv.addEventListener("pointermove",setM);
+cv.addEventListener("pointerdown",setM);
+cv.addEventListener("pointerleave",leave);
+cv.addEventListener("pointercancel",leave);
+cv.addEventListener("pointerup",e=>{ if(e.pointerType!=="mouse") leave(); });
 
-function renderNode(id,q){
-  const N=D.nodes, nd=N[id];
-  let x=nd.x, y=nd.y, r=nd.r, a=1, R0=nd.c[0],G0=nd.c[1],B0=nd.c[2];
-  const par=parent[id], b=birth[id];
-  if(par>=0){
-    const dur=pdur[id]||0.05;
-    const e=clamp01((q-b)/dur);
-    if(e<1){
-      const P=N[par], eS=smoothstep(0,1,e);
-      x=lerp(P.x,nd.x,eS); y=lerp(P.y,nd.y,eS);
-      r=lerp(P.r*0.72,nd.r,eS);
-      R0=lerp(P.c[0],nd.c[0],eS); G0=lerp(P.c[1],nd.c[1],eS); B0=lerp(P.c[2],nd.c[2],eS);
-      a=0.35+0.65*eS;
+const ids=[], stack=[];
+const byRadius=(a,b)=>(sR[b]-sR[a]) || (a-b);           // stable order: no shimmer between equal sizes
+
+// Top-down: a node splits into its children as its own merge level rises past its split
+// time. Children are interpolated from the parent's *rendered* state using the parent's
+// level, so a group collapses into exactly the dot that replaces it — nothing pops.
+function layout(){
+  const N=D.nodes;
+  ids.length=0; stack.length=0;
+  for(const r of roots){
+    const nd=N[r];
+    sX[r]=nd.x; sY[r]=nd.y; sR[r]=nd.r;
+    sCol[3*r]=nd.c[0]; sCol[3*r+1]=nd.c[1]; sCol[3*r+2]=nd.c[2]; sFinal[r]=1;
+    stack.push(r);
+  }
+  while(stack.length){
+    const id=stack.pop(), nd=N[id];
+    const e = !nd.ch ? 0 : forced[id] ? 1 : clamp01((qLeaf[repLeaf[id]]-nd.s)/(nd.d||0.05));
+    if(e<=0){ ids.push(id); continue; }
+    const t=ease(e), fin=sFinal[id] && t>=1;
+    for(const c of nd.ch){
+      const cn=N[c];
+      sX[c]=lerp(sX[id],cn.x,t); sY[c]=lerp(sY[id],cn.y,t); sR[c]=lerp(sR[id],cn.r,t);
+      sCol[3*c]  =lerp(sCol[3*id],  cn.c[0],t);
+      sCol[3*c+1]=lerp(sCol[3*id+1],cn.c[1],t);
+      sCol[3*c+2]=lerp(sCol[3*id+2],cn.c[2],t);
+      sFinal[c]=fin?1:0;
+      stack.push(c);
     }
   }
-  let pr=R(r)*RS; if(pr<0.35) pr=0.35;
-  ctx.beginPath(); ctx.arc(X(x),Y(y),pr,0,6.2832);
-  ctx.fillStyle=`rgba(${R0|0},${G0|0},${B0|0},${a})`; ctx.fill();
 }
 
-let lastT=0;
-function draw(T){
+function draw(T,dt){
   const W=cw(), H=ch();
   ctx.clearRect(0,0,W,H);
   if(!D) return;
-  RS = parseFloat(ui.rs.value);
-  const dt = lastT ? Math.min(T-lastT,0.1) : 0; lastT=T;
+  dt=dt||0;
 
-  mxS=lerp(mxS,mTargetX,0.25); myS=lerp(myS,mTargetY,0.25);
+  const kM = 1-Math.exp(-dt/0.06);
+  mxS=lerp(mxS,mTargetX,kM); myS=lerp(myS,mTargetY,kM);
 
-  const bAmt=parseFloat(ui.bAmt.value), bPer=parseFloat(ui.bPer.value);
-  const breath = bAmt*(0.5-0.5*Math.cos(6.2832*T/bPer));
+  const breath = P.bAmt*(0.5-0.5*Math.cos(6.2832*T/P.bPer));
   const qG = 1 - breath;
 
-  const amb=parseFloat(ui.amb.value), aS=parseFloat(ui.ambS.value);
-  const cx=W/2, cy=H/2;
-  const Rx=W*0.30, Ry=H*0.30;
-  const minDim=Math.min(W,H);
-  const ambSig=minDim*parseFloat(ui.ambR.value), ambDen=2*ambSig*ambSig;
+  const aS=P.ambS, cx=W/2, cy=H/2, Rx=W*0.30, Ry=H*0.30;
+  const ambSig=Math.min(W,H)*P.ambR, ambDen=2*ambSig*ambSig;
   const pulse=(ph)=>{ const u=0.5+0.5*Math.sin(T*0.9*aS+ph); return u*u; };
-  const drifters=[
-    { x:cx+Rx*Math.sin(T*1.0*aS+0.0), y:cy+Ry*Math.sin(T*1.3*aS+1.3), den:ambDen, str:amb*pulse(0.0) },
-    { x:cx+Rx*Math.sin(T*0.7*aS+2.6), y:cy+Ry*Math.sin(T*0.9*aS+4.0), den:ambDen, str:amb*pulse(3.1) },
-  ];
+  const d0x=cx+Rx*Math.sin(T*1.0*aS+0.0), d0y=cy+Ry*Math.sin(T*1.3*aS+1.3), d0s=P.amb*pulse(0.0);
+  const d1x=cx+Rx*Math.sin(T*0.7*aS+2.6), d1y=cy+Ry*Math.sin(T*0.9*aS+4.0), d1s=P.amb*pulse(3.1);
 
-  const hStrT = mInside ? parseFloat(ui.hStr.value) : 0;
-  const hRad=parseFloat(ui.hRad.value), hDen=2*hRad*hRad;
-  const maxStep = parseFloat(ui.hSpd.value)*dt;
-  const maxNodeR = parseFloat(ui.maxPx.value)/(view.s*RS);
-  const split = ui.split.checked;
-  const hStrV = parseFloat(ui.hStr.value) || 1;
+  const hStrT = mInside ? P.hStr : 0;
+  const hDen=2*P.hRad*P.hRad;
+  const kIn  = 1-Math.exp(-dt/P.hSpd);                 // exponential approach: soft start and stop
+  const kOut = 1-Math.exp(-dt/(P.hSpd*2.5));           // release more slowly than attack
+  const hStrV = P.hStr || 1;
 
-  fc++;
-  const N=D.nodes, pairs=[];
+  const N=D.nodes, s=view.s, ox=view.ox, oy=view.oy;
   for(let k=0;k<leaves.length;k++){
-    const li=leaves[k], nd=N[li], sx=X(nd.x), sy=Y(nd.y);
-    let ambF=0;
-    for(const d of drifters){ const dx=sx-d.x,dy=sy-d.y; ambF+=d.str*Math.exp(-(dx*dx+dy*dy)/d.den); }
+    const li=leaves[k], nd=N[li], sx=ox+nd.x*s, sy=oy+nd.y*s;
+    let dx=sx-d0x, dy=sy-d0y;
+    let ambF=d0s*Math.exp(-(dx*dx+dy*dy)/ambDen);
+    dx=sx-d1x; dy=sy-d1y;
+    ambF+=d1s*Math.exp(-(dx*dx+dy*dy)/ambDen);
     let ht=0;
-    if(hStrT>0.002){ const dx=sx-mxS,dy=sy-myS; ht=hStrT*Math.exp(-(dx*dx+dy*dy)/hDen); }
-    let c=charge[k]; const dl=ht-c; c += dl>maxStep?maxStep:(dl<-maxStep?-maxStep:dl); charge[k]=c;
+    if(hStrT>0){ dx=sx-mxS; dy=sy-myS; ht=hStrT*Math.exp(-(dx*dx+dy*dy)/hDen); }
+    let c=charge[k];
+    c += (ht-c)*(ht>c?kIn:kOut);
+    charge[k]=c;
 
     let q;
-    if(split){
-      // smooth push-back: suppress the ambient merge most at the centre and ease
-      // it back in with distance (smoothstep), never fully -> no clean hard edge
-      const sup=c/hStrV;                 // 0..1 (gaussian in space, ramped in time)
-      const soft=sup*sup*(3-2*sup);
-      q=qG-ambF*(1-0.85*soft);
+    if(P.split){
+      // hover suppresses the ambient merge, eased so there is no hard edge
+      const sup=clamp01(c/hStrV);
+      q=qG-ambF*(1-0.85*ease(sup));
     } else {
-      q=qG-ambF-c;                       // charge lowers q -> merge into blobs
+      q=qG-ambF-c;                                     // charge lowers q -> merge into blobs
     }
-    if(q<0)q=0; else if(q>1)q=1;
-    let id=li;
-    while(parent[id]>=0 && q<birth[id] && N[parent[id]].r<=maxNodeR) id=parent[id];
-    if(frameMark[id]!==fc){ frameMark[id]=fc; pairs.push([id,q]); }
+    qLeaf[k] = q<0 ? 0 : q>1 ? 1 : q;
   }
-  pairs.sort((a,b)=>N[b[0]].r-N[a[0]].r);
-  for(const [id,q] of pairs) renderNode(id,q);
+  layout();
+  ids.sort(byRadius);
+  const rs=P.rs*s;
+  for(let i=0;i<ids.length;i++){
+    const id=ids[i];
+    let pr=sR[id]*rs; if(pr<0.35) pr=0.35;
+    ctx.beginPath(); ctx.arc(ox+sX[id]*s, oy+sY[id]*s, pr, 0, 6.2832);
+    ctx.fillStyle = sFinal[id] ? css[id]
+      : `rgb(${sCol[3*id]|0},${sCol[3*id+1]|0},${sCol[3*id+2]|0})`;
+    ctx.fill();
+  }
 }
 
-let t0=0;
-function tick(now){ if(!t0) t0=now; draw((now-t0)/1000); requestAnimationFrame(tick); }
+// Animation clock accumulates only while visible, so pausing off-screen doesn't make the
+// ambient drifters jump when it resumes.
+let T=0, last=0, visible=true, rafId=0;
+function tick(now){
+  const dt = last ? Math.min((now-last)/1000, 0.05) : 0;
+  last=now; T+=dt;
+  draw(T,dt);
+  rafId=requestAnimationFrame(tick);
+}
+function start(){ if(!rafId && !reduced && D){ last=0; rafId=requestAnimationFrame(tick); } }
+function stop(){ if(rafId){ cancelAnimationFrame(rafId); rafId=0; } }
+if(window.IntersectionObserver){
+  new IntersectionObserver(es=>{ visible=es[0].isIntersecting; visible?start():stop(); }).observe(cv);
+}
 
-const bind=(el,out,f)=>{ const g=()=>out.textContent=f(el.value); el.oninput=g; g(); };
+const bind=(el,out,f)=>{ const g=()=>{ out.textContent=f(el.value); readParams(); computeFloors(); }; el.oninput=g; g(); };
 bind(ui.bAmt,ui.vbAmt,v=>(+v).toFixed(3));
 bind(ui.bPer,ui.vbPer,v=>(+v).toFixed(0));
 bind(ui.amb,ui.vamb,v=>(+v).toFixed(2));
@@ -213,11 +276,13 @@ bind(ui.hRad,ui.vhRad,v=>(+v).toFixed(0));
 bind(ui.hSpd,ui.vhSpd,v=>(+v).toFixed(2));
 bind(ui.maxPx,ui.vmax,v=>(+v).toFixed(0));
 bind(ui.rs,ui.vrs,v=>(+v).toFixed(2));
+ui.split.onchange=readParams;
+readParams();
 document.getElementById("collapse").onclick=e=>{ const p=document.getElementById("panel"); p.classList.toggle("min"); e.target.textContent=p.classList.contains("min")?"+":"–"; };
 
-fetch(DATA_URL+"?v=6").then(r=>r.json()).then(d=>{
+fetch(DATA_URL+"?v=7").then(r=>r.json()).then(d=>{
   D=d; precompute(); resize();
-  if(reduced){ draw(0); } else requestAnimationFrame(tick);
+  if(reduced) draw(0); else if(visible) start();
 }).catch(err=>{
   cv.insertAdjacentHTML("afterend",
    `<pre style="position:absolute;left:16px;top:16px;color:#c05549">Failed to load ${DATA_URL}\n${err}\nServe over http.</pre>`);

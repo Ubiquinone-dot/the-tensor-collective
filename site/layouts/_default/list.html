@@ -1,9 +1,9 @@
 {{ define "main" }}
 <section class="list-page">
   <div class="container">
-    <h1>{{ if .IsHome }}Essays{{ else }}{{ .Title }}{{ end }}</h1>
-    {{ $pages := .RegularPages }}
-    {{ if .IsHome }}{{ $pages = where site.RegularPages "Section" "posts" }}{{ end }}
+    <h1>{{ if or .IsHome (eq .Section "posts") }}Essays{{ else }}{{ .Title }}{{ end }}</h1>
+    {{ $pages := .RegularPages.ByDate.Reverse }}
+    {{ if .IsHome }}{{ $pages = (where site.RegularPages "Section" "posts").ByDate.Reverse }}{{ end }}
     {{ range $pages }}
       {{ partial "post-card.html" . }}
     {{ else }}
