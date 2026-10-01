@@ -140,6 +140,4 @@ Everything beyond that is machinery for letting tokens talk to one another. That
 
 Circuits notation then gives you an easy way to view and compose all of this. A head is $(A \otimes W_OW_V)$: one product across positions, one across features, and the two compose cleanly.
 
-This is a work in progress — the obvious gaps are multi-head composition and what happens across layers, which is where the circuits thread gets genuinely interesting. Do email me if you spot errors.
-
 {{< bibliography >}}
