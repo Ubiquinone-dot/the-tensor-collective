@@ -222,5 +222,121 @@
     },
     "title": "De novo design of all-atom biomolecular interactions with RFdiffusion3",
     "type": "article-journal"
+  },
+  {
+    "URL": "https://transformer-circuits.pub/2021/framework/index.html",
+    "author": [
+      {
+        "family": "Elhage",
+        "given": "Nelson"
+      },
+      {
+        "family": "Nanda",
+        "given": "Neel"
+      },
+      {
+        "family": "Olsson",
+        "given": "Catherine"
+      },
+      {
+        "family": "Henighan",
+        "given": "Tom"
+      },
+      {
+        "family": "Joseph",
+        "given": "Nicholas"
+      },
+      {
+        "family": "Mann",
+        "given": "Ben"
+      },
+      {
+        "family": "Askell",
+        "given": "Amanda"
+      },
+      {
+        "family": "Bai",
+        "given": "Yuntao"
+      },
+      {
+        "family": "Chen",
+        "given": "Anna"
+      },
+      {
+        "family": "Conerly",
+        "given": "Tom"
+      },
+      {
+        "family": "DasSarma",
+        "given": "Nova"
+      },
+      {
+        "family": "Drain",
+        "given": "Dawn"
+      },
+      {
+        "family": "Ganguli",
+        "given": "Deep"
+      },
+      {
+        "family": "Hatfield-Dodds",
+        "given": "Zac"
+      },
+      {
+        "family": "Hernandez",
+        "given": "Danny"
+      },
+      {
+        "family": "Jones",
+        "given": "Andy"
+      },
+      {
+        "family": "Kernion",
+        "given": "Jackson"
+      },
+      {
+        "family": "Lovitt",
+        "given": "Liane"
+      },
+      {
+        "family": "Ndousse",
+        "given": "Kamal"
+      },
+      {
+        "family": "Amodei",
+        "given": "Dario"
+      },
+      {
+        "family": "Brown",
+        "given": "Tom"
+      },
+      {
+        "family": "Clark",
+        "given": "Jack"
+      },
+      {
+        "family": "Kaplan",
+        "given": "Jared"
+      },
+      {
+        "family": "McCandlish",
+        "given": "Sam"
+      },
+      {
+        "family": "Olah",
+        "given": "Christopher"
+      }
+    ],
+    "container-title": "Transformer Circuits Thread",
+    "id": "elhage2021mathematical",
+    "issued": {
+      "date-parts": [
+        [
+          2021
+        ]
+      ]
+    },
+    "title": "A mathematical framework for Transformer circuits",
+    "type": "article-journal"
   }
 ]
