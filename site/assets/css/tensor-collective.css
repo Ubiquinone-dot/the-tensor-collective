@@ -140,6 +140,11 @@ img, video { max-width: 100%; height: auto; }
   display: block;
 }
 @media (max-width: 560px) {
+  /* collapse to icons so all five stay on one line */
+  .hero .links { gap: 1.5rem; }
+  .hero .links .link-label { display: none; }
+  .hero .links a { gap: 0; }
+  .hero .links svg { width: 20px; height: 20px; }
   .hero-grid { grid-template-columns: 1fr; gap: 2rem; align-items: start; }
   .hero-photo { max-width: 320px; margin: 0 auto; }
   .hero-photo img { height: auto; min-height: 0; max-height: 380px; }
@@ -163,7 +168,7 @@ img, video { max-width: 100%; height: auto; }
   margin: 0 0 1.75rem;
   color: var(--foreground);
 }
-.hero .links { display: flex; flex-wrap: wrap; gap: 0.35rem 1.5rem; }
+.hero .links { display: flex; flex-wrap: nowrap; gap: 1.25rem; }
 .hero .links a {
   display: inline-flex;
   align-items: center;
@@ -173,6 +178,7 @@ img, video { max-width: 100%; height: auto; }
   font-weight: 500;
 }
 .hero .links a:hover { color: var(--primary); opacity: 1; }
+.hero .links a { white-space: nowrap; }
 .hero .links svg { width: 15px; height: 15px; }
 .pill {
   display: inline-flex;

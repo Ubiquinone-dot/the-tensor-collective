@@ -116,7 +116,6 @@
   },
   {
     "DOI": "10.1101/2025.09.18.676967",
-    "URL": "https://doi.org/10.1101/2025.09.18.676967",
     "author": [
       {
         "family": "Butcher",
@@ -338,5 +337,595 @@
     },
     "title": "A mathematical framework for Transformer circuits",
     "type": "article-journal"
+  },
+  {
+    "DOI": "10.1038/s41586-021-04184-w",
+    "author": [
+      {
+        "family": "Anishchenko",
+        "given": "Ivan"
+      },
+      {
+        "family": "Pellock",
+        "given": "Samuel J."
+      },
+      {
+        "family": "Chidyausiku",
+        "given": "Tamuka M."
+      },
+      {
+        "family": "Ramelot",
+        "given": "Theresa A."
+      },
+      {
+        "family": "Ovchinnikov",
+        "given": "Sergey"
+      },
+      {
+        "family": "Hao",
+        "given": "Jingzhou"
+      },
+      {
+        "family": "Bafna",
+        "given": "Khushboo"
+      },
+      {
+        "family": "Norn",
+        "given": "Christoffer"
+      },
+      {
+        "family": "Kang",
+        "given": "Alex"
+      },
+      {
+        "family": "Bera",
+        "given": "Asim K."
+      },
+      {
+        "family": "DiMaio",
+        "given": "Frank"
+      },
+      {
+        "family": "Carter",
+        "given": "Lauren"
+      },
+      {
+        "family": "Chow",
+        "given": "Cameron M."
+      },
+      {
+        "family": "Montelione",
+        "given": "Gaetano T."
+      },
+      {
+        "family": "Baker",
+        "given": "David"
+      }
+    ],
+    "container-title": "Nature",
+    "id": "anishchenko2021hallucination",
+    "issued": {
+      "date-parts": [
+        [
+          2021
+        ]
+      ]
+    },
+    "page": "547-552",
+    "title": "De novo protein design by deep network hallucination",
+    "type": "article-journal",
+    "volume": "600"
+  },
+  {
+    "DOI": "10.1073/pnas.1914677117",
+    "author": [
+      {
+        "family": "Yang",
+        "given": "Jianyi"
+      },
+      {
+        "family": "Anishchenko",
+        "given": "Ivan"
+      },
+      {
+        "family": "Park",
+        "given": "Hahnbeom"
+      },
+      {
+        "family": "Peng",
+        "given": "Zhenling"
+      },
+      {
+        "family": "Ovchinnikov",
+        "given": "Sergey"
+      },
+      {
+        "family": "Baker",
+        "given": "David"
+      }
+    ],
+    "container-title": "Proceedings of the National Academy of Sciences",
+    "id": "yang2020trrosetta",
+    "issued": {
+      "date-parts": [
+        [
+          2020
+        ]
+      ]
+    },
+    "page": "1496-1503",
+    "title": "Improved protein structure prediction using predicted interresidue orientations",
+    "type": "article-journal",
+    "volume": "117"
+  },
+  {
+    "DOI": "10.1038/s41592-025-02975-x",
+    "author": [
+      {
+        "family": "Ahern",
+        "given": "Woody"
+      },
+      {
+        "family": "Yim",
+        "given": "Jason"
+      },
+      {
+        "family": "Tischer",
+        "given": "Doug"
+      },
+      {
+        "family": "Salike",
+        "given": "Saman"
+      },
+      {
+        "family": "Woodbury",
+        "given": "Seth M."
+      },
+      {
+        "family": "Kim",
+        "given": "Donghyo"
+      },
+      {
+        "family": "Kalvet",
+        "given": "Indrek"
+      },
+      {
+        "family": "Kipnis",
+        "given": "Yakov"
+      },
+      {
+        "family": "Coventry",
+        "given": "Brian"
+      },
+      {
+        "family": "Altae-Tran",
+        "given": "Han Raut"
+      },
+      {
+        "family": "Bauer",
+        "given": "Magnus S."
+      },
+      {
+        "family": "Barzilay",
+        "given": "Regina"
+      },
+      {
+        "family": "Jaakkola",
+        "given": "Tommi S."
+      },
+      {
+        "family": "Krishna",
+        "given": "Rohith"
+      },
+      {
+        "family": "Baker",
+        "given": "David"
+      }
+    ],
+    "container-title": "Nature Methods",
+    "id": "ahern2025rfdiffusion2",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "page": "96-105",
+    "title": "Atom-level enzyme active site scaffolding using RFdiffusion2",
+    "type": "article-journal",
+    "volume": "23"
+  },
+  {
+    "DOI": "10.1038/s41586-024-07487-w",
+    "author": [
+      {
+        "family": "Abramson",
+        "given": "Josh"
+      },
+      {
+        "family": "Adler",
+        "given": "Jonas"
+      },
+      {
+        "family": "Dunger",
+        "given": "Jack"
+      },
+      {
+        "family": "Evans",
+        "given": "Richard"
+      },
+      {
+        "family": "Green",
+        "given": "Tim"
+      },
+      {
+        "family": "Pritzel",
+        "given": "Alexander"
+      },
+      {
+        "family": "Ronneberger",
+        "given": "Olaf"
+      },
+      {
+        "family": "Willmore",
+        "given": "Lindsay"
+      },
+      {
+        "family": "Ballard",
+        "given": "Andrew J."
+      },
+      {
+        "family": "Bambrick",
+        "given": "Joshua"
+      },
+      {
+        "family": "Bodenstein",
+        "given": "Sebastian W."
+      },
+      {
+        "family": "Evans",
+        "given": "David A."
+      },
+      {
+        "family": "Hung",
+        "given": "Chia-Chun"
+      },
+      {
+        "family": "O’Neill",
+        "given": "Michael"
+      },
+      {
+        "family": "Reiman",
+        "given": "David"
+      },
+      {
+        "family": "Tunyasuvunakool",
+        "given": "Kathryn"
+      },
+      {
+        "family": "Wu",
+        "given": "Zachary"
+      },
+      {
+        "family": "Žemgulytė",
+        "given": "Akvilė"
+      },
+      {
+        "family": "Arvaniti",
+        "given": "Eirini"
+      },
+      {
+        "family": "Beattie",
+        "given": "Charles"
+      },
+      {
+        "family": "Bertolli",
+        "given": "Ottavia"
+      },
+      {
+        "family": "Bridgland",
+        "given": "Alex"
+      },
+      {
+        "family": "Cherepanov",
+        "given": "Alexey"
+      },
+      {
+        "family": "Congreve",
+        "given": "Miles"
+      },
+      {
+        "family": "Cowen-Rivers",
+        "given": "Alexander I."
+      },
+      {
+        "family": "Cowie",
+        "given": "Andrew"
+      },
+      {
+        "family": "Figurnov",
+        "given": "Michael"
+      },
+      {
+        "family": "Fuchs",
+        "given": "Fabian B."
+      },
+      {
+        "family": "Gladman",
+        "given": "Hannah"
+      },
+      {
+        "family": "Jain",
+        "given": "Rishub"
+      },
+      {
+        "family": "Khan",
+        "given": "Yousuf A."
+      },
+      {
+        "family": "Low",
+        "given": "Caroline M. R."
+      },
+      {
+        "family": "Perlin",
+        "given": "Kuba"
+      },
+      {
+        "family": "Potapenko",
+        "given": "Anna"
+      },
+      {
+        "family": "Savy",
+        "given": "Pascal"
+      },
+      {
+        "family": "Singh",
+        "given": "Sukhdeep"
+      },
+      {
+        "family": "Stecula",
+        "given": "Adrian"
+      },
+      {
+        "family": "Thillaisundaram",
+        "given": "Ashok"
+      },
+      {
+        "family": "Tong",
+        "given": "Catherine"
+      },
+      {
+        "family": "Yakneen",
+        "given": "Sergei"
+      },
+      {
+        "family": "Zhong",
+        "given": "Ellen D."
+      },
+      {
+        "family": "Zielinski",
+        "given": "Michal"
+      },
+      {
+        "family": "Žídek",
+        "given": "Augustin"
+      },
+      {
+        "family": "Bapst",
+        "given": "Victor"
+      },
+      {
+        "family": "Kohli",
+        "given": "Pushmeet"
+      },
+      {
+        "family": "Jaderberg",
+        "given": "Max"
+      },
+      {
+        "family": "Hassabis",
+        "given": "Demis"
+      },
+      {
+        "family": "Jumper",
+        "given": "John M."
+      }
+    ],
+    "container-title": "Nature",
+    "id": "abramson2024alphafold3",
+    "issued": {
+      "date-parts": [
+        [
+          2024
+        ]
+      ]
+    },
+    "page": "493-500",
+    "title": "Accurate structure prediction of biomolecular interactions with AlphaFold 3",
+    "type": "article-journal",
+    "volume": "630"
+  },
+  {
+    "DOI": "10.1126/science.add2187",
+    "author": [
+      {
+        "family": "Dauparas",
+        "given": "J."
+      },
+      {
+        "family": "Anishchenko",
+        "given": "I."
+      },
+      {
+        "family": "Bennett",
+        "given": "N."
+      },
+      {
+        "family": "Bai",
+        "given": "H."
+      },
+      {
+        "family": "Ragotte",
+        "given": "R. J."
+      },
+      {
+        "family": "Milles",
+        "given": "L. F."
+      },
+      {
+        "family": "Wicky",
+        "given": "B. I. M."
+      },
+      {
+        "family": "Courbet",
+        "given": "A."
+      },
+      {
+        "dropping-particle": "de",
+        "family": "Haas",
+        "given": "R. J."
+      },
+      {
+        "family": "Bethel",
+        "given": "N."
+      },
+      {
+        "family": "Leung",
+        "given": "P. J. Y."
+      },
+      {
+        "family": "Huddy",
+        "given": "T. F."
+      },
+      {
+        "family": "Pellock",
+        "given": "S."
+      },
+      {
+        "family": "Tischer",
+        "given": "D."
+      },
+      {
+        "family": "Chan",
+        "given": "F."
+      },
+      {
+        "family": "Koepnick",
+        "given": "B."
+      },
+      {
+        "family": "Nguyen",
+        "given": "H."
+      },
+      {
+        "family": "Kang",
+        "given": "A."
+      },
+      {
+        "family": "Sankaran",
+        "given": "B."
+      },
+      {
+        "family": "Bera",
+        "given": "A. K."
+      },
+      {
+        "family": "King",
+        "given": "N. P."
+      },
+      {
+        "family": "Baker",
+        "given": "D."
+      }
+    ],
+    "container-title": "Science",
+    "id": "dauparas2022proteinmpnn",
+    "issued": {
+      "date-parts": [
+        [
+          2022
+        ]
+      ]
+    },
+    "page": "49-56",
+    "title": "Robust deep learning–based protein sequence design using ProteinMPNN",
+    "type": "article-journal",
+    "volume": "378"
+  },
+  {
+    "DOI": "10.18653/v1/2025.acl-long.453",
+    "author": [
+      {
+        "family": "Pagnoni",
+        "given": "Artidoro"
+      },
+      {
+        "family": "Pasunuru",
+        "given": "Ramakanth"
+      },
+      {
+        "family": "Rodriguez",
+        "given": "Pedro"
+      },
+      {
+        "family": "Nguyen",
+        "given": "John"
+      },
+      {
+        "family": "Muller",
+        "given": "Benjamin"
+      },
+      {
+        "family": "Li",
+        "given": "Margaret"
+      },
+      {
+        "family": "Zhou",
+        "given": "Chunting"
+      },
+      {
+        "family": "Yu",
+        "given": "Lili"
+      },
+      {
+        "family": "Weston",
+        "given": "Jason E."
+      },
+      {
+        "family": "Zettlemoyer",
+        "given": "Luke"
+      },
+      {
+        "family": "Ghosh",
+        "given": "Gargi"
+      },
+      {
+        "family": "Lewis",
+        "given": "Mike"
+      },
+      {
+        "family": "Holtzman",
+        "given": "Ari"
+      },
+      {
+        "family": "Iyer",
+        "given": "Srini"
+      }
+    ],
+    "container-title": "Proceedings of the 63rd annual meeting of the association for computational linguistics (volume 1: Long papers)",
+    "id": "pagnoni2025byte",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "page": "9238-9258",
+    "publisher": "Association for Computational Linguistics",
+    "title": "Byte latent transformer: Patches scale better than tokens",
+    "title-short": "Byte latent transformer",
+    "type": "paper-conference"
   }
 ]
