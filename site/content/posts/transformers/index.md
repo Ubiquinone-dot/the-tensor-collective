@@ -67,7 +67,7 @@ Whilst not in itself useful, we will go on to show that **this model exists with
 
 ## Inference: $t\rightarrow T$
 
-Whilst we haven't introduced attention yet, we have the overall structure of a transformer set in place. Whilst you're not confused yet I wanted to take 
+Whilst we haven't introduced attention yet, we have the overall structure of a transformer set in place.
 
 The framework of the ZLT forms the black-box token-to-output token mapping that we need to phrase training and inference of the transformer. Usually with models we can introduce arbitrary complexity / parameters without affecting how we actually perform inference and train them.
 
@@ -132,16 +132,13 @@ The remaining question is where $W$ comes from, and the answer is that each toke
 
 ## Conclusion
 
-What strikes me, having pulled it apart, is how few moving parts there actually are. Almost everything above is a matrix product. The only genuine non-linearity on the path we traced is the Softmax that normalises the attention scores — take that away and a head is a pure composition of linear maps.
+Transformers get their efficiency from how nearly everything in them is matrix multiplication. There is very little else going on: stack the right products in the right order, and the only thing on the path we traced that isn't linear is the Softmax normalising the attention scores.
 
-The build-up went roughly like this:
+The zero-layer transformer is, I think, the most useful thing to hold onto. Paired with the off-by-one input-output training, it gives a really clean picture of what the embedding and unembedding layers are natively trying to do: with no attention attached at all, $(I \otimes W_UW_E)$ is already learning what tends to follow what, token by token, with no notion of context.
 
-- **Embedding.** Tokens become reasonably-sized vectors, $x_0 = tW_E^T$. Nothing clever; just getting words into a space we can do arithmetic in.
-- **The residual stream.** That matrix is the object everything else reads from and writes to — one vector per token, carried forward and enriched layer by layer.
-- **The zero-layer transformer.** With nothing else attached, $(I \otimes W_UW_E)$ already learns what tends to follow what. No token knows anything about any other, yet "Barack" still gets you "Obama". This model sits inside every transformer and always contributes a linear term to the output.
-- **Attention.** Everything after that is the machinery for letting tokens see each other: a weighted sum over a basis, $AV^T$, projected back into the stream by $W_O$, with the weights themselves read out of the stream via $W_Q$ and $W_K$.
+Everything beyond that is machinery for letting tokens talk to one another. That turns out to be a case of forming a basis set of vectors from the query and key indices, taking their similarity, and using it to pull from a basis set formed from those same tokens — the value vectors.
 
-Written in the circuits notation, a head is just $(A \otimes W_OW_V)$ — one product acting across positions, the other across features. That separation is the whole reason the notation is worth the trouble: it lets you talk about *where* a head reads from independently of *what* it writes back.
+Circuits notation then gives you an easy way to view and compose all of this. A head is $(A \otimes W_OW_V)$: one product across positions, one across features, and the two compose cleanly.
 
 This is a work in progress — the obvious gaps are multi-head composition and what happens across layers, which is where the circuits thread gets genuinely interesting. Do email me if you spot errors.
 
