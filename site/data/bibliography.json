@@ -927,5 +927,281 @@
     "title": "Byte latent transformer: Patches scale better than tokens",
     "title-short": "Byte latent transformer",
     "type": "paper-conference"
+  },
+  {
+    "id": "anthropic2023constitution",
+    "type": "webpage",
+    "author": [
+      {
+        "family": "Anthropic"
+      }
+    ],
+    "title": "Claude's constitution",
+    "issued": {
+      "date-parts": [
+        [
+          2023
+        ]
+      ]
+    },
+    "URL": "https://www.anthropic.com/news/claudes-constitution",
+    "container-title": "Anthropic News"
+  },
+  {
+    "id": "anthropic2026constitution",
+    "type": "webpage",
+    "author": [
+      {
+        "family": "Anthropic"
+      }
+    ],
+    "title": "Claude's new constitution",
+    "issued": {
+      "date-parts": [
+        [
+          2026
+        ]
+      ]
+    },
+    "URL": "https://www.anthropic.com/news/claude-new-constitution",
+    "container-title": "Anthropic News"
+  },
+  {
+    "id": "anthropic2026context",
+    "type": "webpage",
+    "author": [
+      {
+        "family": "Anthropic"
+      }
+    ],
+    "title": "Context windows",
+    "container-title": "Claude Developer Platform documentation",
+    "issued": {
+      "date-parts": [
+        [
+          2026
+        ]
+      ]
+    },
+    "URL": "https://platform.claude.com/docs/en/build-with-claude/context-windows"
+  },
+  {
+    "id": "arrow1951social",
+    "type": "book",
+    "author": [
+      {
+        "family": "Arrow",
+        "given": "Kenneth J."
+      }
+    ],
+    "title": "Social Choice and Individual Values",
+    "container-title": "Wiley",
+    "issued": {
+      "date-parts": [
+        [
+          1951
+        ]
+      ]
+    }
+  },
+  {
+    "id": "asimov1950irobot",
+    "type": "book",
+    "author": [
+      {
+        "family": "Asimov",
+        "given": "Isaac"
+      }
+    ],
+    "title": "I, Robot",
+    "container-title": "Gnome Press",
+    "issued": {
+      "date-parts": [
+        [
+          1950
+        ]
+      ]
+    }
+  },
+  {
+    "id": "bai2022constitutional",
+    "type": "article-journal",
+    "author": [
+      {
+        "family": "Bai",
+        "given": "Yuntao"
+      },
+      {
+        "family": "Kadavath",
+        "given": "Saurav"
+      },
+      {
+        "family": "Kundu",
+        "given": "Sandipan"
+      }
+    ],
+    "title": "Constitutional AI: Harmlessness from AI Feedback",
+    "container-title": "arXiv preprint arXiv:2212.08073",
+    "issued": {
+      "date-parts": [
+        [
+          2022
+        ]
+      ]
+    },
+    "URL": "https://arxiv.org/abs/2212.08073"
+  },
+  {
+    "id": "burleigh2025ai",
+    "type": "article-newspaper",
+    "author": [
+      {
+        "family": "Burleigh",
+        "given": "Emma"
+      }
+    ],
+    "title": "AI is doing job interviews now, but candidates say they'd rather risk staying unemployed than talk to another robot",
+    "container-title": "Fortune",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "URL": "https://fortune.com/2025/08/03/ai-interviewers-job-seekers-unemployment-hiring-hr-teams"
+  },
+  {
+    "id": "huang2024collective",
+    "type": "paper-conference",
+    "author": [
+      {
+        "family": "Huang",
+        "given": "Saffron"
+      },
+      {
+        "family": "Siddarth",
+        "given": "Divya"
+      },
+      {
+        "family": "Lovitt",
+        "given": "Liane"
+      },
+      {
+        "family": "Liao",
+        "given": "Thomas I."
+      },
+      {
+        "family": "Durmus",
+        "given": "Esin"
+      },
+      {
+        "family": "Tamkin",
+        "given": "Alex"
+      },
+      {
+        "family": "Ganguli",
+        "given": "Deep"
+      }
+    ],
+    "title": "Collective Constitutional AI: Aligning a Language Model with Public Input",
+    "container-title": "Proceedings of the 2024 ACM Conference on Fairness, Accountability, and Transparency",
+    "page": "1395-1417",
+    "issued": {
+      "date-parts": [
+        [
+          2024
+        ]
+      ]
+    },
+    "URL": "https://arxiv.org/abs/2406.07814"
+  },
+  {
+    "id": "kulveit2025gradual",
+    "type": "article-journal",
+    "author": [
+      {
+        "family": "Kulveit",
+        "given": "Jan"
+      },
+      {
+        "family": "Douglas",
+        "given": "Raymond"
+      },
+      {
+        "family": "Ammann",
+        "given": "Nora"
+      },
+      {
+        "family": "Turan",
+        "given": "Deger"
+      },
+      {
+        "family": "Krueger",
+        "given": "David"
+      },
+      {
+        "family": "Duvenaud",
+        "given": "David"
+      }
+    ],
+    "title": "Gradual Disempowerment: Systemic Existential Risks from Incremental AI Development",
+    "container-title": "arXiv preprint arXiv:2501.16946",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "URL": "https://arxiv.org/abs/2501.16946"
+  },
+  {
+    "id": "mehta2025yelp",
+    "type": "article-newspaper",
+    "author": [
+      {
+        "family": "Mehta",
+        "given": "Ivan"
+      }
+    ],
+    "title": "Yelp debuts AI voice agents for restaurants and service providers",
+    "container-title": "TechCrunch",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "URL": "https://techcrunch.com/2025/04/29/yelp-is-adding-ai-powered-voice-agents-for-restaurants-and-services"
+  },
+  {
+    "id": "tierney2025ambient",
+    "type": "article-journal",
+    "author": [
+      {
+        "family": "Tierney",
+        "given": "Aaron A."
+      },
+      {
+        "family": "Gayre"
+      },
+      {
+        "family": "Hoberman"
+      }
+    ],
+    "title": "Ambient Artificial Intelligence Scribes: Learnings after 1 Year and over 2.5 Million Uses",
+    "container-title": "NEJM Catalyst",
+    "volume": "6",
+    "issue": "5",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "DOI": "10.1056/CAT.25.0040"
   }
 ]
