@@ -3,9 +3,9 @@
 <a class="post-card" href="{{ .RelPermalink }}">
   <div class="post-card-inner">
     {{ with $cover }}
-    <div class="post-card-thumb">
+    <div class="post-card-thumb{{ if $coverDark }} cover-stack{{ end }}">
       <img{{ if $coverDark }} class="cover-light"{{ end }} src="{{ . }}" alt="{{ $.Title }}" loading="lazy" />
-      {{ with $coverDark }}<img class="cover-dark" src="{{ . }}" alt="{{ $.Title }}" loading="lazy" />{{ end }}
+      {{ with $coverDark }}<img class="cover-dark" src="{{ . }}" alt="" aria-hidden="true" loading="lazy" />{{ end }}
     </div>
     {{ end }}
     <div class="post-card-body">

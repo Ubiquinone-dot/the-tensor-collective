@@ -17,10 +17,14 @@
     </div>
 
     {{ with $cover }}
-    <img class="post-cover{{ if $coverDark }} cover-light{{ end }}" src="{{ . }}" alt="{{ $.Title }}" />
+    {{ if $coverDark }}
+    <div class="post-cover cover-stack">
+      <img class="cover-light" src="{{ . }}" alt="{{ $.Title }}" />
+      <img class="cover-dark" src="{{ $coverDark }}" alt="" aria-hidden="true" />
+    </div>
+    {{ else }}
+    <img class="post-cover" src="{{ . }}" alt="{{ $.Title }}" />
     {{ end }}
-    {{ with $coverDark }}
-    <img class="post-cover cover-dark" src="{{ . }}" alt="{{ $.Title }}" />
     {{ end }}
 
     <div class="prose">

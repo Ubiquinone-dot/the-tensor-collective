@@ -336,9 +336,19 @@ img, video { max-width: 100%; height: auto; }
   margin-bottom: 2.25rem;
 }
 
-/* Theme-specific covers: show the image matching the current theme */
-html:not(.dark) .cover-dark,
-.dark .cover-light { display: none !important; }
+/* Theme-specific covers: both images stay rendered, so the swap never waits on a
+   fetch or decode; the dark cover fades in over the light one */
+.cover-stack { position: relative; overflow: hidden; }
+.cover-stack img { display: block; width: 100%; }
+.cover-stack .cover-dark {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.dark .cover-stack .cover-dark { opacity: 1; }
 
 .post-cover {
   width: 100%;
