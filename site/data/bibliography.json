@@ -1203,5 +1203,44 @@
       ]
     },
     "DOI": "10.1056/CAT.25.0040"
+  },
+  {
+    "id": "lovett2023teladoc",
+    "type": "article-newspaper",
+    "author": [
+      {
+        "family": "Lovett",
+        "given": "Laura"
+      }
+    ],
+    "title": "Teladoc Doubles Down on Therapist Productivity Improvements, AI to Drive Efficiencies for BetterHelp",
+    "container-title": "Behavioral Health Business",
+    "issued": {
+      "date-parts": [
+        [
+          2023
+        ]
+      ]
+    },
+    "URL": "https://bhbusiness.com/2023/07/25/teladoc-doubles-down-on-therapist-productivity-improvements-ai-to-drive-efficiencies-for-betterhelp/"
+  },
+  {
+    "id": "openai2026navier",
+    "type": "webpage",
+    "author": [
+      {
+        "family": "OpenAI"
+      }
+    ],
+    "title": "On the Navier–Stokes Millennium Prize Problem",
+    "container-title": "OpenAI",
+    "issued": {
+      "date-parts": [
+        [
+          2026
+        ]
+      ]
+    },
+    "URL": "https://openai.com/index/navier-stokes-solution/"
   }
 ]
