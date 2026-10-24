@@ -9,6 +9,7 @@ description: "Asimov imagined Machines that run the world well and answer to no 
 
 cover:
   image: cover.webp
+  imageDark: cover-dark.webp
   alt: "An orator addresses a crowd in an ancient Athenian assembly, painted in vivid impressionist strokes"
 
 draft: false

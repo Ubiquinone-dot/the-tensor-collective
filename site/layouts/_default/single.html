@@ -1,17 +1,6 @@
 {{ define "main" }}
-{{- $cover := "" -}}
-{{- with .Params.cover.image -}}
-  {{- $raw := . -}}
-  {{- if or (strings.HasPrefix $raw "http") (strings.HasPrefix $raw "/") -}}
-    {{- $cover = $raw -}}
-  {{- else -}}
-    {{- with $.Resources.GetMatch $raw -}}
-      {{- $cover = .RelPermalink -}}
-    {{- else -}}
-      {{- $cover = printf "/%s" $raw -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
+{{- $cover := partial "cover-src.html" (dict "page" . "raw" .Params.cover.image) -}}
+{{- $coverDark := partial "cover-src.html" (dict "page" . "raw" .Params.cover.imageDark) -}}
 <article class="post">
   <div class="post-container">
     <a href="{{ "/posts/" | relURL }}" class="back-link">
@@ -28,7 +17,10 @@
     </div>
 
     {{ with $cover }}
-    <img class="post-cover" src="{{ . }}" alt="{{ $.Title }}" />
+    <img class="post-cover{{ if $coverDark }} cover-light{{ end }}" src="{{ . }}" alt="{{ $.Title }}" />
+    {{ end }}
+    {{ with $coverDark }}
+    <img class="post-cover cover-dark" src="{{ . }}" alt="{{ $.Title }}" />
     {{ end }}
 
     <div class="prose">

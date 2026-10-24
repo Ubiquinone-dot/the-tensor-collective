@@ -1,22 +1,11 @@
-{{- $cover := "" -}}
-{{- with .Params.cover.image -}}
-  {{- $raw := . -}}
-  {{- if or (strings.HasPrefix $raw "http") (strings.HasPrefix $raw "/") -}}
-    {{- $cover = $raw -}}
-  {{- else -}}
-    {{- /* try page resource first, then fall back to /static */ -}}
-    {{- with $.Resources.GetMatch $raw -}}
-      {{- $cover = .RelPermalink -}}
-    {{- else -}}
-      {{- $cover = printf "/%s" $raw -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
+{{- $cover := partial "cover-src.html" (dict "page" . "raw" .Params.cover.image) -}}
+{{- $coverDark := partial "cover-src.html" (dict "page" . "raw" .Params.cover.imageDark) -}}
 <a class="post-card" href="{{ .RelPermalink }}">
   <div class="post-card-inner">
     {{ with $cover }}
     <div class="post-card-thumb">
-      <img src="{{ . }}" alt="{{ $.Title }}" loading="lazy" />
+      <img{{ if $coverDark }} class="cover-light"{{ end }} src="{{ . }}" alt="{{ $.Title }}" loading="lazy" />
+      {{ with $coverDark }}<img class="cover-dark" src="{{ . }}" alt="{{ $.Title }}" loading="lazy" />{{ end }}
     </div>
     {{ end }}
     <div class="post-card-body">

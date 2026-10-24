@@ -336,6 +336,10 @@ img, video { max-width: 100%; height: auto; }
   margin-bottom: 2.25rem;
 }
 
+/* Theme-specific covers: show the image matching the current theme */
+html:not(.dark) .cover-dark,
+.dark .cover-light { display: none !important; }
+
 .post-cover {
   width: 100%;
   margin: 0 0 2.5rem;

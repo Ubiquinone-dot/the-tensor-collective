@@ -1,0 +1,19 @@
+{{- /*
+  Resolve a cover image path to a URL: absolute URLs and site paths pass through,
+  page-bundle resources resolve to their permalink, anything else falls back to /static.
+  Usage: partial "cover-src.html" (dict "page" . "raw" .Params.cover.image)
+*/ -}}
+{{- $src := "" -}}
+{{- with .raw -}}
+  {{- $raw := . -}}
+  {{- if or (strings.HasPrefix $raw "http") (strings.HasPrefix $raw "/") -}}
+    {{- $src = $raw -}}
+  {{- else -}}
+    {{- with $.page.Resources.GetMatch $raw -}}
+      {{- $src = .RelPermalink -}}
+    {{- else -}}
+      {{- $src = printf "/%s" $raw -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $src -}}
