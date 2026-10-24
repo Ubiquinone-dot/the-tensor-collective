@@ -6,3 +6,16 @@
 [build.environment]
   HUGO_VERSION = "0.128.0"
   HUGO_EXTENDED = "true"
+
+# The site moved to collectedtensors.com; keep old links working
+[[redirects]]
+  from = "https://thetensorcollective.com/*"
+  to = "https://collectedtensors.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.thetensorcollective.com/*"
+  to = "https://collectedtensors.com/:splat"
+  status = 301
+  force = true
