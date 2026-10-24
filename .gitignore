@@ -10,3 +10,15 @@ site/public
 */*.swn
 */*.DS_Store
 *.DS_Store
+
+# Raw structure files never go under site/ (it is published); keep them in structures/
+site/**/*.pdb
+site/**/*.pdb.gz
+site/**/*.ent
+site/**/*.cif
+site/**/*.cif.gz
+site/**/*.mmcif
+site/**/*.bcif
+site/**/*.mmtf
+site/**/*.pse
+site/**/*.pze
