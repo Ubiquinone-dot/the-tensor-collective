@@ -1,0 +1,124 @@
+{{- /*
+  Briggs–Rauscher vs. digit classifier, for the Introduction post.
+  Usage: {{< briggs-digits >}}  (inline SVG; follows the site's .dark class)
+*/ -}}
+<figure class="bd-fig" role="img" aria-label="Left: a flask oscillating between pale yellow and deep blue, driven by a loop of simple reaction steps. Right: a hand-drawn seven multiplied by a weight matrix gives class scores, with seven the winner.">
+<style>
+.bd-fig { --bd-teal: var(--primary); --bd-orange: #AF672B; --bd-yellow: #F4E9B0; --bd-amber: #E2AE4A; --bd-blue: #23408E;
+  --bd-ink: var(--foreground); --bd-soft: var(--muted-foreground); --bd-line: var(--border-strong); --bd-card: var(--card); }
+.dark .bd-fig { --bd-orange: #F6A15F; --bd-yellow: #E9DC9C; --bd-amber: #E7B256; --bd-blue: #3C63CF; }
+.bd-fig .bd-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+@media (max-width: 640px) { .bd-fig .bd-panels { grid-template-columns: 1fr; } }
+.bd-fig svg { width: 100%; height: auto; display: block; background: var(--bd-card); border: 1px solid var(--border);
+  border-radius: 10px; font-family: var(--font-sans); overflow: visible; }
+.bd-fig .bd-title { font-size: 12.5px; font-weight: 600; fill: var(--bd-ink); }
+.bd-fig .bd-sub { font-size: 10.5px; fill: var(--bd-soft); }
+.bd-fig .bd-glass { fill: none; stroke: var(--bd-ink); stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; }
+.bd-fig .bd-rim { fill: none; stroke: var(--bd-ink); stroke-width: 2.6; stroke-linecap: round; }
+.bd-fig .bd-shine { fill: none; stroke: var(--bd-card); stroke-width: 3; stroke-linecap: round; opacity: .55; }
+.bd-fig .bd-liquid { fill: var(--bd-yellow); animation: bd-colour 6s linear infinite; }
+.bd-fig .bd-surface { fill: var(--bd-yellow); animation: bd-colour 6s linear infinite, bd-slosh 3s ease-in-out infinite; }
+@keyframes bd-colour { 0% { fill: var(--bd-yellow); } 58% { fill: var(--bd-amber); } 70% { fill: var(--bd-amber); }
+  74% { fill: var(--bd-blue); } 90% { fill: var(--bd-blue); } 100% { fill: var(--bd-yellow); } }
+@keyframes bd-slosh { 0%,100% { transform: translateX(0); } 50% { transform: translateX(-14px); } }
+.bd-fig .bd-bubble { fill: none; stroke: #fff; stroke-width: 1.4; opacity: 0; animation: bd-rise 6s ease-in infinite; }
+@keyframes bd-rise { 0% { transform: translateY(0); opacity: 0; } 10% { opacity: .85; } 80% { opacity: .7; }
+  100% { transform: translateY(-70px); opacity: 0; } }
+.bd-fig .bd-node circle { fill: var(--bd-card); stroke: var(--bd-teal); stroke-width: 2; }
+.bd-fig .bd-node text { font-size: 10px; font-weight: 600; text-anchor: middle; fill: var(--bd-ink); }
+.bd-fig .bd-node { transform-box: fill-box; transform-origin: center; animation: bd-pulse 6s ease-in-out infinite; }
+@keyframes bd-pulse { 0%,30%,100% { transform: scale(1); } 10% { transform: scale(1.16); } }
+.bd-fig .bd-node { --pulse: var(--bd-orange); }
+.bd-fig .bd-node circle { animation: bd-glow 6s ease-in-out infinite; animation-delay: inherit; }
+@keyframes bd-glow { 0%,30%,100% { stroke: var(--bd-teal); } 10% { stroke: var(--bd-orange); } }
+.bd-fig .bd-arrow { fill: none; stroke: var(--bd-soft); stroke-width: 1.6; stroke-dasharray: 4 4; animation: bd-flow 1.2s linear infinite; }
+@keyframes bd-flow { to { stroke-dashoffset: -16; } }
+.bd-fig .bd-head { fill: var(--bd-soft); }
+.bd-fig .bd-trace { fill: none; stroke: var(--bd-teal); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.bd-fig .bd-scroll { animation: bd-scroll 6s linear infinite; }
+.bd-fig .bd-nowline { stroke: var(--bd-ink); stroke-width: 1.4; stroke-dasharray: 2 3; }
+@keyframes bd-scroll { to { transform: translateX(-100px); } }
+.bd-fig .bd-cell { fill: none; stroke: var(--bd-line); stroke-width: 1; }
+.bd-fig .bd-ink { fill: var(--bd-teal); opacity: 0; animation: bd-draw 6s ease-out infinite; }
+@keyframes bd-draw { 0% { opacity: 0; } 4% { opacity: var(--v); } 82% { opacity: var(--v); } 92%,100% { opacity: 0; } }
+.bd-fig .bd-w { opacity: var(--v); }
+.bd-fig .bd-w.pos { fill: var(--bd-teal); }
+.bd-fig .bd-w.neg { fill: var(--bd-orange); }
+.bd-fig .bd-wbox { fill: none; stroke: var(--bd-ink); stroke-width: 1.6; }
+.bd-fig .bd-op { font-size: 15px; font-weight: 600; fill: var(--bd-ink); text-anchor: middle; }
+.bd-fig .bd-bar { fill: var(--bd-line); transform-box: fill-box; transform-origin: bottom; animation: bd-grow 6s cubic-bezier(.3,1.5,.5,1) infinite; }
+.bd-fig .bd-bar.win { fill: var(--bd-orange); }
+@keyframes bd-grow { 0%,36% { transform: scaleY(0); } 52% { transform: scaleY(1); } 86% { transform: scaleY(1); } 96%,100% { transform: scaleY(0); } }
+.bd-fig .bd-tick { font-size: 9.5px; text-anchor: middle; fill: var(--bd-soft); }
+.bd-fig .bd-tick.win { fill: var(--bd-orange); font-weight: 700; }
+.bd-fig .bd-base { stroke: var(--bd-line); stroke-width: 1.2; }
+.bd-fig .bd-back { fill: none; stroke: var(--bd-orange); stroke-width: 1.6; stroke-dasharray: 5 4; animation: bd-flow 1.2s linear infinite reverse; }
+.bd-fig .bd-headback { fill: var(--bd-orange); }
+.bd-fig .bd-grad { font-size: 11px; font-style: italic; fill: var(--bd-orange); text-anchor: middle; }
+.bd-fig .bd-pick { opacity: 0; animation: bd-pick 6s ease-out infinite; }
+@keyframes bd-pick { 0%,50% { opacity: 0; } 56%,86% { opacity: 1; } 94%,100% { opacity: 0; } }
+.bd-fig .bd-pick text { font-size: 11px; font-weight: 700; fill: var(--bd-orange); text-anchor: middle; }
+.bd-fig .bd-acc { font-size: 12px; font-weight: 600; fill: var(--bd-ink); text-anchor: middle; }
+.bd-fig .bd-acc tspan.n { fill: var(--bd-orange); }
+.bd-fig .bd-flowline { fill: none; stroke: var(--bd-soft); stroke-width: 1.6; }
+@media (prefers-reduced-motion: reduce) {
+  .bd-fig * { animation: none !important; }
+  .bd-fig .bd-ink { opacity: var(--v); } .bd-fig .bd-pick { opacity: 1; }
+  .bd-fig .bd-liquid, .bd-fig .bd-surface { fill: var(--bd-blue); }
+}
+</style>
+<div class="bd-panels">
+<svg viewBox="0 0 340 290" aria-hidden="true">
+  <defs>
+    <clipPath id="bd-flask-clip"><path d="M96,54 L96,104 L54,196 Q47,214 66,214 L154,214 Q173,214 166,196 L124,104 L124,54 Z"/></clipPath>
+    <clipPath id="bd-trace-clip"><rect x="20" y="226" width="300" height="50" rx="3"/></clipPath>
+    <linearGradient id="bd-band" gradientUnits="userSpaceOnUse" x1="20" y1="0" x2="120" y2="0" spreadMethod="repeat">
+      <stop offset="0" style="stop-color:var(--bd-yellow)"/><stop offset=".58" style="stop-color:var(--bd-amber)"/>
+      <stop offset=".70" style="stop-color:var(--bd-amber)"/><stop offset=".74" style="stop-color:var(--bd-blue)"/>
+      <stop offset=".90" style="stop-color:var(--bd-blue)"/><stop offset="1" style="stop-color:var(--bd-yellow)"/>
+    </linearGradient>
+    <marker id="bd-head" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="bd-head" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+  <text class="bd-title" x="20" y="24">The Briggs–Rauscher reaction</text>
+  <text class="bd-sub" x="20" y="39">a loop of simple, single-step reactions</text>
+  <g clip-path="url(#bd-flask-clip)">
+    <rect class="bd-liquid" x="30" y="138" width="160" height="90"/>
+    <path class="bd-surface" d="M20,140 Q36,132 52,140 T84,140 T116,140 T148,140 T180,140 T212,140 L212,150 L20,150 Z"/>
+    <circle class="bd-bubble" cx="78" cy="208" r="3" style="animation-delay:-0.0s"/><circle class="bd-bubble" cx="102" cy="208" r="2.2" style="animation-delay:-1.1s"/><circle class="bd-bubble" cx="130" cy="208" r="3.4" style="animation-delay:-2.3s"/><circle class="bd-bubble" cx="148" cy="208" r="2.4" style="animation-delay:-0.6s"/><circle class="bd-bubble" cx="90" cy="208" r="2.0" style="animation-delay:-3.4s"/><circle class="bd-bubble" cx="118" cy="208" r="2.8" style="animation-delay:-4.2s"/><circle class="bd-bubble" cx="140" cy="208" r="1.8" style="animation-delay:-5.0s"/>
+  </g>
+  <path class="bd-glass" d="M96,54 L96,104 L54,196 Q47,214 66,214 L154,214 Q173,214 166,196 L124,104 L124,54"/>
+  <path class="bd-rim" d="M90,54 L130,54"/>
+  <path class="bd-shine" d="M64,196 L98,118"/>
+  <path class="bd-arrow" d="M282.9,81.0 A46,46 0 0 1 303.0,101.1" marker-end="url(#bd-head)"/><path class="bd-arrow" d="M303.0,142.9 A46,46 0 0 1 282.9,163.0" marker-end="url(#bd-head)"/><path class="bd-arrow" d="M241.1,163.0 A46,46 0 0 1 221.0,142.9" marker-end="url(#bd-head)"/><path class="bd-arrow" d="M221.0,101.1 A46,46 0 0 1 241.1,81.0" marker-end="url(#bd-head)"/>
+  <g class="bd-node" style="animation-delay:0.0s"><circle cx="262.0" cy="76.0" r="17"/><text x="262.0" y="80.0">IO₃⁻</text></g><g class="bd-node" style="animation-delay:1.5s"><circle cx="308.0" cy="122.0" r="17"/><text x="308.0" y="126.0">HOI</text></g><g class="bd-node" style="animation-delay:3.0s"><circle cx="262.0" cy="168.0" r="17"/><text x="262.0" y="172.0">I₂</text></g><g class="bd-node" style="animation-delay:4.5s"><circle cx="216.0" cy="122.0" r="17"/><text x="216.0" y="126.0">I⁻</text></g>
+  
+  <g clip-path="url(#bd-trace-clip)"><g class="bd-scroll"><path class="bd-trace" d="M20,262 C50,262 75,244 90,234 L96,262 L120,262 C150,262 175,244 190,234 L196,262 L220,262 C250,262 275,244 290,234 L296,262 L320,262 C350,262 375,244 390,234 L396,262 L420,262"/><rect x="20" y="268" width="400" height="7" fill="url(#bd-band)"/></g></g>
+  <line class="bd-nowline" x1="320" y1="230" x2="320" y2="276"/>
+  <text class="bd-sub" x="20" y="286">over time →</text>
+</svg>
+<svg viewBox="0 0 340 290" aria-hidden="true">
+  <defs>
+    <marker id="bd-head2" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="bd-head" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="bd-head3" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="bd-headback" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+  <text class="bd-title" x="20" y="24">Classifying a hand-drawn digit</text>
+  <text class="bd-sub" x="20" y="39">one matrix product, tuned with calculus</text>
+  <rect class="bd-cell" x="18" y="66" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="29" y="66" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="40" y="66" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="51" y="66" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="62" y="66" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="73" y="66" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="84" y="66" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="95" y="66" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="18" y="77" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="29" y="77" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="40" y="77" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="51" y="77" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="62" y="77" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="73" y="77" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="84" y="77" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="95" y="77" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="18" y="88" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="29" y="88" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="40" y="88" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="51" y="88" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="62" y="88" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="73" y="88" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="84" y="88" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="95" y="88" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="18" y="99" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="29" y="99" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="40" y="99" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="51" y="99" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="62" y="99" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="73" y="99" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="84" y="99" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="95" y="99" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="18" y="110" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="29" y="110" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="40" y="110" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="51" y="110" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="62" y="110" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="73" y="110" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="84" y="110" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="95" y="110" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="18" y="121" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="29" y="121" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="40" y="121" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="51" y="121" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="62" y="121" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="73" y="121" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="84" y="121" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="95" y="121" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="18" y="132" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="29" y="132" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="40" y="132" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="51" y="132" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="62" y="132" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="73" y="132" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="84" y="132" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="95" y="132" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="18" y="143" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="29" y="143" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="40" y="143" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="51" y="143" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="62" y="143" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="73" y="143" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="84" y="143" width="9.5" height="9.5" rx="2"/><rect class="bd-cell" x="95" y="143" width="9.5" height="9.5" rx="2"/>
+  <rect class="bd-ink" x="29" y="66" width="9.5" height="9.5" rx="2" style="--v:0.6;animation-delay:0.00s"/><rect class="bd-ink" x="40" y="66" width="9.5" height="9.5" rx="2" style="--v:1;animation-delay:0.09s"/><rect class="bd-ink" x="51" y="66" width="9.5" height="9.5" rx="2" style="--v:1;animation-delay:0.18s"/><rect class="bd-ink" x="62" y="66" width="9.5" height="9.5" rx="2" style="--v:1;animation-delay:0.27s"/><rect class="bd-ink" x="73" y="66" width="9.5" height="9.5" rx="2" style="--v:1;animation-delay:0.36s"/><rect class="bd-ink" x="84" y="66" width="9.5" height="9.5" rx="2" style="--v:0.8;animation-delay:0.45s"/><rect class="bd-ink" x="84" y="77" width="9.5" height="9.5" rx="2" style="--v:1;animation-delay:0.54s"/><rect class="bd-ink" x="84" y="88" width="9.5" height="9.5" rx="2" style="--v:0.5;animation-delay:0.63s"/><rect class="bd-ink" x="73" y="88" width="9.5" height="9.5" rx="2" style="--v:0.8;animation-delay:0.72s"/><rect class="bd-ink" x="73" y="99" width="9.5" height="9.5" rx="2" style="--v:1;animation-delay:0.81s"/><rect class="bd-ink" x="84" y="99" width="9.5" height="9.5" rx="2" style="--v:0.4;animation-delay:0.90s"/><rect class="bd-ink" x="62" y="99" width="9.5" height="9.5" rx="2" style="--v:1;animation-delay:0.99s"/><rect class="bd-ink" x="51" y="99" width="9.5" height="9.5" rx="2" style="--v:0.5;animation-delay:1.08s"/><rect class="bd-ink" x="62" y="110" width="9.5" height="9.5" rx="2" style="--v:1;animation-delay:1.17s"/><rect class="bd-ink" x="62" y="121" width="9.5" height="9.5" rx="2" style="--v:0.6;animation-delay:1.26s"/><rect class="bd-ink" x="51" y="121" width="9.5" height="9.5" rx="2" style="--v:0.7;animation-delay:1.35s"/><rect class="bd-ink" x="51" y="132" width="9.5" height="9.5" rx="2" style="--v:1;animation-delay:1.44s"/><rect class="bd-ink" x="51" y="143" width="9.5" height="9.5" rx="2" style="--v:0.9;animation-delay:1.53s"/><rect class="bd-ink" x="40" y="143" width="9.5" height="9.5" rx="2" style="--v:0.5;animation-delay:1.62s"/>
+  <text class="bd-sub" x="61" y="168" text-anchor="middle">pixels</text>
+  <text class="bd-op" x="115" y="117">×</text>
+  <rect class="bd-wbox" x="124" y="84" width="54.5" height="54.5" rx="4"/>
+  <rect class="bd-w neg" x="128" y="88" width="6.5" height="6.5" rx="1.5" style="--v:0.39"/><rect class="bd-w neg" x="136" y="88" width="6.5" height="6.5" rx="1.5" style="--v:0.66"/><rect class="bd-w neg" x="144" y="88" width="6.5" height="6.5" rx="1.5" style="--v:0.56"/><rect class="bd-w pos" x="152" y="88" width="6.5" height="6.5" rx="1.5" style="--v:0.17"/><rect class="bd-w pos" x="160" y="88" width="6.5" height="6.5" rx="1.5" style="--v:0.15"/><rect class="bd-w neg" x="168" y="88" width="6.5" height="6.5" rx="1.5" style="--v:0.18"/><rect class="bd-w pos" x="128" y="96" width="6.5" height="6.5" rx="1.5" style="--v:0.47"/><rect class="bd-w neg" x="136" y="96" width="6.5" height="6.5" rx="1.5" style="--v:0.22"/><rect class="bd-w pos" x="144" y="96" width="6.5" height="6.5" rx="1.5" style="--v:0.64"/><rect class="bd-w neg" x="152" y="96" width="6.5" height="6.5" rx="1.5" style="--v:0.6"/><rect class="bd-w neg" x="160" y="96" width="6.5" height="6.5" rx="1.5" style="--v:0.93"/><rect class="bd-w neg" x="168" y="96" width="6.5" height="6.5" rx="1.5" style="--v:0.83"/><rect class="bd-w neg" x="128" y="104" width="6.5" height="6.5" rx="1.5" style="--v:0.24"/><rect class="bd-w pos" x="136" y="104" width="6.5" height="6.5" rx="1.5" style="--v:0.38"/><rect class="bd-w pos" x="144" y="104" width="6.5" height="6.5" rx="1.5" style="--v:0.27"/><rect class="bd-w neg" x="152" y="104" width="6.5" height="6.5" rx="1.5" style="--v:0.65"/><rect class="bd-w neg" x="160" y="104" width="6.5" height="6.5" rx="1.5" style="--v:0.57"/><rect class="bd-w neg" x="168" y="104" width="6.5" height="6.5" rx="1.5" style="--v:0.17"/><rect class="bd-w pos" x="128" y="112" width="6.5" height="6.5" rx="1.5" style="--v:0.68"/><rect class="bd-w pos" x="136" y="112" width="6.5" height="6.5" rx="1.5" style="--v:0.38"/><rect class="bd-w neg" x="144" y="112" width="6.5" height="6.5" rx="1.5" style="--v:0.5"/><rect class="bd-w pos" x="152" y="112" width="6.5" height="6.5" rx="1.5" style="--v:0.78"/><rect class="bd-w pos" x="160" y="112" width="6.5" height="6.5" rx="1.5" style="--v:0.32"/><rect class="bd-w pos" x="168" y="112" width="6.5" height="6.5" rx="1.5" style="--v:0.56"/><rect class="bd-w neg" x="128" y="120" width="6.5" height="6.5" rx="1.5" style="--v:0.73"/><rect class="bd-w neg" x="136" y="120" width="6.5" height="6.5" rx="1.5" style="--v:0.93"/><rect class="bd-w pos" x="144" y="120" width="6.5" height="6.5" rx="1.5" style="--v:0.47"/><rect class="bd-w pos" x="152" y="120" width="6.5" height="6.5" rx="1.5" style="--v:0.25"/><rect class="bd-w pos" x="160" y="120" width="6.5" height="6.5" rx="1.5" style="--v:0.15"/><rect class="bd-w pos" x="168" y="120" width="6.5" height="6.5" rx="1.5" style="--v:0.75"/><rect class="bd-w neg" x="128" y="128" width="6.5" height="6.5" rx="1.5" style="--v:0.85"/><rect class="bd-w pos" x="136" y="128" width="6.5" height="6.5" rx="1.5" style="--v:0.7"/><rect class="bd-w pos" x="144" y="128" width="6.5" height="6.5" rx="1.5" style="--v:0.6"/><rect class="bd-w pos" x="152" y="128" width="6.5" height="6.5" rx="1.5" style="--v:0.82"/><rect class="bd-w pos" x="160" y="128" width="6.5" height="6.5" rx="1.5" style="--v:0.51"/><rect class="bd-w pos" x="168" y="128" width="6.5" height="6.5" rx="1.5" style="--v:0.17"/>
+  <text class="bd-sub" x="152" y="168" text-anchor="middle">weights W</text>
+  <path class="bd-flowline" d="M184,112 L206,112" marker-end="url(#bd-head2)"/>
+  <line class="bd-base" x1="211" y1="170" x2="330.0" y2="170"/>
+  <rect class="bd-bar" x="214.0" y="163.6" width="8" height="6.4" rx="2"/><text class="bd-tick" x="218.0" y="183">0</text><rect class="bd-bar" x="225.6" y="158.8" width="8" height="11.2" rx="2"/><text class="bd-tick" x="229.6" y="183">1</text><rect class="bd-bar" x="237.2" y="154.0" width="8" height="16.0" rx="2"/><text class="bd-tick" x="241.2" y="183">2</text><rect class="bd-bar" x="248.8" y="149.2" width="8" height="20.8" rx="2"/><text class="bd-tick" x="252.8" y="183">3</text><rect class="bd-bar" x="260.4" y="162.0" width="8" height="8.0" rx="2"/><text class="bd-tick" x="264.4" y="183">4</text><rect class="bd-bar" x="272.0" y="160.4" width="8" height="9.6" rx="2"/><text class="bd-tick" x="276.0" y="183">5</text><rect class="bd-bar" x="283.6" y="165.2" width="8" height="4.8" rx="2"/><text class="bd-tick" x="287.6" y="183">6</text><rect class="bd-bar win" x="295.2" y="96.4" width="8" height="73.6" rx="2"/><text class="bd-tick win" x="299.2" y="183">7</text><rect class="bd-bar" x="306.8" y="155.6" width="8" height="14.4" rx="2"/><text class="bd-tick" x="310.8" y="183">8</text><rect class="bd-bar" x="318.4" y="146.0" width="8" height="24.0" rx="2"/><text class="bd-tick" x="322.4" y="183">9</text>
+  <g class="bd-pick"><text x="299.2" y="89.4">“7”</text></g>
+  <text class="bd-sub" x="272.0" y="198" text-anchor="middle">scores</text>
+  <path class="bd-back" d="M254,210 Q204,248 152,176" marker-end="url(#bd-head3)"/>
+  <text class="bd-grad" x="266" y="236">∂loss / ∂W</text>
+  <text class="bd-acc" x="170" y="279">≈ <tspan class="n">90%</tspan> accuracy on hand-drawn digits</text>
+</svg>
+</div>
+<figcaption>Two complex behaviours, each built from simple pieces: oscillating colours from a loop of single-step reactions, and digit recognition from a matrix product and some calculus.</figcaption>
+</figure>

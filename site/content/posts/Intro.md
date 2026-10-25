@@ -18,8 +18,6 @@ description: "This blog consists of a small collection of projects of mine that 
 
 ---
 
-# Introduction
-
 Machine learning is inherently simple. Take a random matrix, apply it to your input and calculate a number that is proportional to how close you are to your target for said input. Now use an automatic differentiation package to take care of the calculus for you to figure out how much you need to change the parameters to get a better matrix. Repeat this enough times and you're on your way to the vast majority of deep learning algorithms.
 
 Many of the intimidating concepts in ML don't require degrees in mathematics and statistics to grasp. Better yet, as we embrace the tools of today it helps to understand their technical grounding. With some of these articles, I want to bridge the gap between technical aspects and the user experience of these applications. It's become a bit of a buzzword however and machine learning isn't fit for a majority of problems. However, the algorithms we use have become extremely efficient and will continue to do so. I think there's a huge appetite for a platform to onboard people from scientific platforms into the machine learning domain; my primary focus is to provide intuition and insights into the field for those with an outside perspective.
@@ -30,6 +28,8 @@ Many domains beyond language are rich in application but due to their complexity
 I pivoted to machine learning in recent years with a curiosity founded on how simple machine learning can be to it's core. I'm passionate to help other scientists bridge the gaps in their knowledge, and bring out the best of this fantastic technology.
 
 My journey as a Chemist began with an infatuation for the vast complexity of chemical processes, and their wildly unpredictable behaviour. The Briggs-Rauscher displays oscillating changes between vibrant shades of blue and pale yellow, only explainable via a complex chain of interlinked single-step reactions. Algorithms capable of surpassing human-level identification are too, nothing more than a complex orchestration of simple building blocks; simple calculus and matrix products can get you to an accuracy of around 90% for classifying hand-drawn digits. Time will tell what a decade of engineering and science can get you!
+
+{{< briggs-digits >}}
 
 -Jasper, last updated Sep 20, 2025
 
