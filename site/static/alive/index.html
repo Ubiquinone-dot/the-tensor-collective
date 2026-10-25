@@ -75,6 +75,8 @@ const PROTEINS = [
   { url:"data/crystal_unit_cell.alive.json",  caption:"designed protein crystal, unit cell" },
 ];
 const HOLD = 14, MELT = 1.4;                         // seconds on show; seconds to melt out (and in)
+// ?p=N pins one design (no cycling), for galleries that show every design side by side.
+const PIN = (()=>{ const m=location.search.match(/[?&]p=(\d+)/); return m && +m[1]<PROTEINS.length ? +m[1] : null; })();
 
 const cv = document.getElementById("c");
 const ctx = cv.getContext("2d");
@@ -135,7 +137,7 @@ const load = i => cache[i] || (cache[i] = fetch(PROTEINS[i].url+"?v=9").then(r=>
 function show(i, d){
   cur=i; D=d; precompute(); computeView();
   capEl.textContent = PROTEINS[i].caption;
-  load((i+1)%PROTEINS.length);                        // warm the next one while this is on show
+  if(PIN===null) load((i+1)%PROTEINS.length);        // warm the next one while this is on show
 }
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 if (/[?&]tune\b/.test(location.search)) document.body.classList.add("tune");
@@ -336,7 +338,7 @@ function tick(now){
 // the canvas, and a swap waits for the next design to finish loading.
 let pending=null;
 function cycle(dt){
-  if(PROTEINS.length<2) return;
+  if(PROTEINS.length<2 || PIN!==null) return;
   phaseT+=dt;
   if(phase==="hold"){
     if(mInside) phaseT-=dt;
@@ -356,6 +358,7 @@ function next(){
   load(i).then(d=>{ pending={i,d}; }).catch(()=>{ phase="in"; phaseT=MELT*(1-melt); });
 }
 cv.addEventListener("click",()=>{
+  if(PIN!==null) return;
   if(reduced){ load((cur+1)%PROTEINS.length).then(d=>{ show((cur+1)%PROTEINS.length,d); draw(0); }); }
   else next();
 });
@@ -381,12 +384,14 @@ ui.split.onchange=readParams;
 readParams();
 document.getElementById("collapse").onclick=e=>{ const p=document.getElementById("panel"); p.classList.toggle("min"); e.target.textContent=p.classList.contains("min")?"+":"–"; };
 
-load(0).then(d=>{
-  show(0,d); resize();
+const first = PIN ?? 0;
+if(PIN!==null) cv.style.cursor="default";
+load(first).then(d=>{
+  show(first,d); resize();
   if(reduced) draw(0); else if(visible) start();
 }).catch(err=>{
   cv.insertAdjacentHTML("afterend",
-   `<pre style="position:absolute;left:16px;top:16px;color:#c05549">Failed to load ${PROTEINS[0].url}\n${err}\nServe over http.</pre>`);
+   `<pre style="position:absolute;left:16px;top:16px;color:#c05549">Failed to load ${PROTEINS[first].url}\n${err}\nServe over http.</pre>`);
 });
 if(window.ResizeObserver){ new ResizeObserver(resize).observe(cv); }
 addEventListener("resize",resize);

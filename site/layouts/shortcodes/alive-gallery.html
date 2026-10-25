@@ -1,0 +1,21 @@
+{{- /*
+  Every design from the homepage canvas at once, one pinned canvas each (/alive/?p=N).
+  Usage: {{< alive-gallery >}}. Keep the count in step with PROTEINS in static/alive/index.html.
+*/ -}}
+<figure class="alive-gallery">
+  <div class="alive-grid">
+    {{- range seq 0 3 }}
+    <iframe src="{{ printf "/alive/?p=%d" . | relURL }}" title="A designed protein, rendered as a hierarchy of merging points"
+      loading="lazy" scrolling="no" tabindex="-1"></iframe>
+    {{- end }}
+  </div>
+  <figcaption>Hover over a design to stir its points.</figcaption>
+</figure>
+<style>
+.alive-gallery .alive-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.alive-gallery iframe { display: block; width: 100%; height: 300px; border: 0; background: transparent; }
+@media (max-width: 560px) {
+  .alive-gallery .alive-grid { grid-template-columns: 1fr; }
+  .alive-gallery iframe { height: 260px; }
+}
+</style>

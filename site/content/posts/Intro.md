@@ -33,5 +33,7 @@ My journey as a Chemist began with an infatuation for the vast complexity of che
 
 -Jasper, last updated Sep 20, 2025
 
+{{< alive-gallery >}}
+
 
 <!-- ![name](path/to/image.png#center) Use this to center -->
