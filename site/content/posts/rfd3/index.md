@@ -12,7 +12,8 @@ tags: ["Protein design", "Enzyme Design"]
 description: "With this article, I wanted to share to share some of the experiences we had building RFD3, and how this project changed the way I thought about building generative models to solve real world problems."
 
 cover:
-  image: imgs/dna_binder.png
+  image: cover.webp
+  imageDark: imgs/dna_binder.png
   alt: "Generated image of a DNA binding protein, an impressionist painting painted in the style of an exploding nebula"
 
 weight: 9
