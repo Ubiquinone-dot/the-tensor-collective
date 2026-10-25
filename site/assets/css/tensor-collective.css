@@ -26,7 +26,7 @@
   --card: oklch(0.3 0.008 250);
   --muted: oklch(0.33 0.008 250);
   --muted-foreground: oklch(0.72 0.008 250);
-  --primary: oklch(0.83 0.11 172);      /* brighter teal for contrast on charcoal */
+  --primary: #189F59;                   /* green to match the homepage protein canvas */
   --primary-fg: oklch(0.2 0.01 250);
   --border: oklch(0.36 0.008 250);
   --border-strong: oklch(0.44 0.01 250);
