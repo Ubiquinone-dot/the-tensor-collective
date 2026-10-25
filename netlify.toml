@@ -1,7 +1,7 @@
 [build]
   base    = "site"
   publish = "public"
-  command = "hugo --gc --minify"
+  command = "hugo --gc --minify && sh ../scripts/check-no-structures.sh public"
 
 [build.environment]
   HUGO_VERSION = "0.128.0"

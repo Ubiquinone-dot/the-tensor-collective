@@ -10,7 +10,7 @@
   html,body{ margin:0; height:100%; }
   /* embed: transparent so the host page's bg (light/dark) shows through the iframe */
   body{ background:transparent; color:var(--ink); font:16px/1.55 "Helvetica Neue",Helvetica,Arial,sans-serif; overflow:hidden; }
-  #c{ display:block; width:100%; height:100%; position:fixed; inset:0; touch-action:pan-y; }
+  #c{ display:block; width:100%; height:100%; position:fixed; inset:0; touch-action:pan-y; cursor:pointer; }
 
   /* embed: control panel hidden unless ?tune — the piece auto-runs with tuned defaults */
   #panel{ display:none; position:absolute; top:12px; right:12px; width:228px; background:var(--paper);
@@ -27,10 +27,16 @@
   .toggle{ display:flex; align-items:center; gap:8px; color:var(--mut); cursor:pointer; margin:10px 0 2px; }
   .toggle input{ accent-color:var(--teal); }
   body.tune #panel{ display:block; }
+
+  /* caption for the protein on show; mid-grey reads on both the light and dark host page */
+  #cap{ position:fixed; left:0; right:0; bottom:10px; text-align:center; pointer-events:none;
+    font:12px/1.4 "IBM Plex Mono",ui-monospace,Menlo,monospace; letter-spacing:.02em; color:#8a8378;
+    transition:opacity .6s ease; }
 </style>
 </head>
 <body>
   <canvas id="c"></canvas>
+  <div id="cap"></div>
       <div id="panel" class="min">
         <button id="collapse" title="collapse">+</button>
         <h1>alive</h1>
@@ -60,7 +66,15 @@
       </div>
 
 <script>
-const DATA_URL = "data/2_hydrolase.alive.json";   // coarse (roots=2, balanced) -> big blobs
+// Designs on show, in order. Each melts into blobs and re-forms as the next; click to skip ahead.
+// Dot data comes from a render of the source structure (kept out of the site, in structures/).
+const PROTEINS = [
+  { url:"data/2_hydrolase.alive.json",        caption:"cysteine hydrolase · RFdiffusion3" },
+  { url:"data/phosphotriesterase.alive.json", caption:"phosphotriesterase · RFdiffusion3" },
+  { url:"data/protease_tdp43.alive.json",     caption:"TDP-43 cleaving metalloprotease · RFdiffusion3" },
+  { url:"data/crystal_unit_cell.alive.json",  caption:"designed protein crystal, unit cell" },
+];
+const HOLD = 14, MELT = 1.4;                         // seconds on show; seconds to melt out (and in)
 
 const cv = document.getElementById("c");
 const ctx = cv.getContext("2d");
@@ -68,6 +82,15 @@ let D=null, view=null, leaves=[], parent=null, charge=null;
 let qLeaf=null, repLeaf=null, forced=null, css=null;
 let sX,sY,sR,sCol,sFinal;                            // per-frame render state of each node
 
+const capEl = document.getElementById("cap");
+let cur = 0, phase = "hold", phaseT = 0, melt = 0;   // melt: 0 = formed, 1 = fully merged and faded
+const cache = {};
+const load = i => cache[i] || (cache[i] = fetch(PROTEINS[i].url+"?v=8").then(r=>r.json()));
+function show(i, d){
+  cur=i; D=d; precompute(); computeView();
+  capEl.textContent = PROTEINS[i].caption;
+  load((i+1)%PROTEINS.length);                        // warm the next one while this is on show
+}
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 if (/[?&]tune\b/.test(location.search)) document.body.classList.add("tune");
 
@@ -235,11 +258,14 @@ function draw(T,dt){
     } else {
       q=qG-ambF-c;                                     // charge lowers q -> merge into blobs
     }
+    q *= 1-ease(melt);
     qLeaf[k] = q<0 ? 0 : q>1 ? 1 : q;
   }
   layout();
   ids.sort(byRadius);
   const rs=P.rs*s;
+  ctx.globalAlpha = 1-ease(clamp01((melt-0.4)/0.6));
+  capEl.style.opacity = 1-ease(clamp01(melt/0.5));
   for(let i=0;i<ids.length;i++){
     const id=ids[i];
     let pr=sR[id]*rs; if(pr<0.35) pr=0.35;
@@ -256,9 +282,38 @@ let T=0, last=0, visible=true, rafId=0;
 function tick(now){
   const dt = last ? Math.min((now-last)/1000, 0.05) : 0;
   last=now; T+=dt;
+  cycle(dt);
   draw(T,dt);
   rafId=requestAnimationFrame(tick);
 }
+// hold -> melt out -> swap -> melt in -> hold. The hold clock stops while the pointer is over
+// the canvas, and a swap waits for the next design to finish loading.
+let pending=null;
+function cycle(dt){
+  if(PROTEINS.length<2) return;
+  phaseT+=dt;
+  if(phase==="hold"){
+    if(mInside) phaseT-=dt;
+    if(phaseT>=HOLD) next();
+  } else if(phase==="out"){
+    melt=clamp01(phaseT/MELT);
+    if(melt>=1 && pending){ show(pending.i, pending.d); pending=null; phase="in"; phaseT=0; }
+  } else if(phase==="in"){
+    melt=1-clamp01(phaseT/MELT);
+    if(melt<=0){ phase="hold"; phaseT=0; }
+  }
+}
+function next(){
+  if(phase==="out") return;
+  const i=(cur+1)%PROTEINS.length;
+  phase="out"; phaseT=MELT*melt;                     // melting in -> reverse from where it is
+  load(i).then(d=>{ pending={i,d}; }).catch(()=>{ phase="in"; phaseT=MELT*(1-melt); });
+}
+cv.addEventListener("click",()=>{
+  if(reduced){ load((cur+1)%PROTEINS.length).then(d=>{ show((cur+1)%PROTEINS.length,d); draw(0); }); }
+  else next();
+});
+
 function start(){ if(!rafId && !reduced && D){ last=0; rafId=requestAnimationFrame(tick); } }
 function stop(){ if(rafId){ cancelAnimationFrame(rafId); rafId=0; } }
 if(window.IntersectionObserver){
@@ -280,12 +335,12 @@ ui.split.onchange=readParams;
 readParams();
 document.getElementById("collapse").onclick=e=>{ const p=document.getElementById("panel"); p.classList.toggle("min"); e.target.textContent=p.classList.contains("min")?"+":"–"; };
 
-fetch(DATA_URL+"?v=7").then(r=>r.json()).then(d=>{
-  D=d; precompute(); resize();
+load(0).then(d=>{
+  show(0,d); resize();
   if(reduced) draw(0); else if(visible) start();
 }).catch(err=>{
   cv.insertAdjacentHTML("afterend",
-   `<pre style="position:absolute;left:16px;top:16px;color:#c05549">Failed to load ${DATA_URL}\n${err}\nServe over http.</pre>`);
+   `<pre style="position:absolute;left:16px;top:16px;color:#c05549">Failed to load ${PROTEINS[0].url}\n${err}\nServe over http.</pre>`);
 });
 if(window.ResizeObserver){ new ResizeObserver(resize).observe(cv); }
 addEventListener("resize",resize);
