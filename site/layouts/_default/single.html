@@ -17,14 +17,41 @@
     </div>
 
     {{ with $cover }}
-    {{ if $coverDark }}
-    <div class="post-cover cover-stack">
-      <img class="cover-light" src="{{ . }}" alt="{{ $.Title }}" />
-      <img class="cover-dark" src="{{ $coverDark }}" alt="" aria-hidden="true" />
-    </div>
-    {{ else }}
-    <img class="post-cover" src="{{ . }}" alt="{{ $.Title }}" />
-    {{ end }}
+    {{- $c := $.Params.cover }}
+    {{- $alt := $c.alt | default $.Title }}
+    <button type="button" class="cover-zoom" aria-label="Enlarge cover image">
+      {{ if $coverDark }}
+      <div class="post-cover cover-stack">
+        <img class="cover-light" src="{{ . }}" alt="{{ $alt }}" />
+        <img class="cover-dark" src="{{ $coverDark }}" alt="" aria-hidden="true" />
+      </div>
+      {{ else }}
+      <img class="post-cover" src="{{ . }}" alt="{{ $alt }}" />
+      {{ end }}
+    </button>
+    {{/* Enlarged cover; closes on any click or Escape */}}
+    <dialog class="cover-lightbox" aria-label="Cover image">
+      <figure>
+        <div class="cover-stack">
+          <img class="cover-light" src="{{ . }}" alt="{{ $alt }}" />
+          {{ with $coverDark }}<img class="cover-dark" src="{{ . }}" alt="" aria-hidden="true" />{{ end }}
+        </div>
+        {{ if or $c.caption $c.source }}
+        <figcaption>
+          {{ with $c.caption }}<span>{{ . | markdownify }}</span>{{ end }}
+          {{ with $c.source }}<span class="cover-source">Source: {{ if $c.sourceUrl }}<a href="{{ $c.sourceUrl }}" target="_blank" rel="noopener noreferrer">{{ . | markdownify }}</a>{{ else }}{{ . | markdownify }}{{ end }}</span>{{ end }}
+        </figcaption>
+        {{ end }}
+      </figure>
+    </dialog>
+    <script>
+      (function(){
+        var btn = document.querySelector(".cover-zoom"), box = document.querySelector(".cover-lightbox");
+        if (!btn || !box || !box.showModal) return;
+        btn.addEventListener("click", function(){ box.showModal(); });
+        box.addEventListener("click", function(e){ if (!e.target.closest("a")) box.close(); });
+      })();
+    </script>
     {{ end }}
 
     <div class="prose">

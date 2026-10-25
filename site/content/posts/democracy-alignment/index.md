@@ -11,6 +11,8 @@ cover:
   image: cover.webp
   imageDark: cover-dark.webp
   alt: "An orator addresses a crowd in an ancient Athenian assembly, painted in vivid impressionist strokes"
+  source: "Painted from an image in Encyclopædia Britannica's *Democracy* gallery"
+  sourceUrl: "https://www.britannica.com/topic/democracy/images-videos"
 
 draft: false
 ---

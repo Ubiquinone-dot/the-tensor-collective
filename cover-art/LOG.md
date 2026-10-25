@@ -4,7 +4,7 @@ One entry per cover: which post it's for, the starting image it was painted from
 
 Covers are made in ChatGPT (DALL·E 3 for the older ones). See `style-pack/` for the style guide to drop into a new session.
 
-**To add a cover:** save the starting image to `sources/<post-slug>.<ext>`, copy the template at the bottom, and fill it in.
+**To add a cover:** save the starting image to `sources/<post-slug>.<ext>`, copy the template at the bottom, and fill it in. If the starting image needs crediting, set `cover.source` (and optionally `cover.sourceUrl`) in the post's front matter; it shows under the enlarged cover along with any `cover.caption`.
 
 ---
 
@@ -14,7 +14,7 @@ Covers are made in ChatGPT (DALL·E 3 for the older ones). See `style-pack/` for
 - **Cover:** `cover.webp` (1672×941), dark-mode `cover-dark.webp` (1672×941)
 - **Date:** 2026-10-24
 - **Tool:** ChatGPT
-- **Starting image:** a classical painting of an orator addressing the Athenian assembly with the Acropolis behind. Likely Philipp von Foltz, *Pericles' Funeral Oration* (1852). *To confirm, and add to `sources/`.*
+- **Starting image:** a painting of an orator addressing the Athenian assembly with the Acropolis behind, from Encyclopædia Britannica's *Democracy* image gallery: https://www.britannica.com/topic/democracy/images-videos. Credited on the post via `cover.source` / `cover.sourceUrl`. *The painting itself is unidentified; add a copy to `sources/`.*
 - **Prompt:** "Paint me an impressionist oil painting version of this painting pasted in the style of an exploding nebula." The dark cover was a night-time repaint of the day cover.
 - **Chat:** https://chatgpt.com/share/6add4043-003c-83e8-b361-bcb8ec73d4b3
 - **Notes:** the first cover was swapped for the current one on 2026-10-24.
