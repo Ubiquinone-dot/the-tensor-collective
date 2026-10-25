@@ -17,7 +17,7 @@ cover:
 draft: false
 ---
 
-Imagine one day you walk into a voting booth. There's no ballot paper, and no list of the politicians who've spent the past six months fighting for your attention. Nobody asks where you sit on the political compass. Instead there's a screen, and it asks you: *what's been on your mind?*
+Imagine one day you walk into a voting booth. There's no ballot paper, and no list of politicians who've spent the past six months fighting for your attention. Nobody asks where you sit on the political compass. Instead there's a screen, and it asks you: *what's been on your mind?*
 
 So you tell it. A pothole has opened up right outside your driveway. The church down the road puts on free meals, which you love, but you wish the neighbourhood had more third spaces like it. The train into the city takes longer than driving. Your parents are stuck on a hospital waiting list, and your rent is half your salary despite an intense job in tech. The booth asks follow-up questions, and you answer. Before you leave it reads back what it heard, and you correct the bits it got wrong or over-emphasised.
 
@@ -77,7 +77,7 @@ So we're left asking how to keep the Machines' competence and hold the wheel at 
 
 In the penultimate chapter of the book, "Evidence", a popular politician Stephen Byerley is running for office when his opponents accuse him of being a robot. To prove he's human, he punches a heckler at a rally, something the First Law would never allow a robot to do to a person, and the crowd loves him for it. Byerley wins, and by the book's final story he is World Co-ordinator, governing alongside the Machines. The robopsychologist comes to believe the heckler may have been a robot. Nobody ever finds out what he really was, and Asimov never tells us whether it matters. Maybe that's the right question for us too: not whether the thing in charge is a machine, but whether it's aligned with the people it serves.
 
-AI has already embedded itself in decisions where humans used to sit 100% of the time. Interviewers use AI note-takers so they can focus on the conversation. Therapy platforms use AI assistants to ask probing questions and match you with a therapist who suits you. AI assistants answer phone calls, and in many places they now handle the whole call {{< cite "mehta2025yelp" >}}. Done well, this is a gift: if we could all afford the best doctor, one who could read every report in a day, we would. Done badly, these systems become little more than efficient intelligence gatherers. I strongly dislike the current state of AI job interviews, and I'm not alone {{< cite "burleigh2025ai" >}}, though I can see that genuinely good ones would let hiring managers give a fair chance to far more applicants.
+AI has already embedded itself in decisions where humans used to sit. Done well, this is a gift. Done badly, these systems become little more than efficient intelligence gatherers. I strongly dislike the current state of AI job interviews, and I'm not alone {{< cite "burleigh2025ai" >}}, though I can see that genuinely good ones would let hiring managers give a fair chance to far more applicants.
 
 Democracy has survived in part because states needed their citizens as workers, taxpayers and soldiers, and that need gave ordinary people leverage: a strike only works if your labour matters. If AI does most of the labour, that leverage fades, quietly {{< cite "kulveit2025gradual" >}}. We will need another way for people's voices to reach the system, and it had better be a channel that actually listens.
 
