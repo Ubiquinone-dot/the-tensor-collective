@@ -4,7 +4,7 @@ from pymol import cmd
 
 TEAL=[18/255,106/255,93/255]; ORANGE=[175/255,103/255,43/255]
 
-def style(protein, accent=None, sticks=None, scene=None, width=1400, height=1200, out='out.png', outline=True):
+def style(protein, accent=None, sticks=None, scene=None, width=1400, height=1200, out='out.png', outline=True, paint=None):
     view=None
     if scene:
         cmd.scene(scene,'recall',animate=0); view=cmd.get_view()
@@ -20,6 +20,7 @@ def style(protein, accent=None, sticks=None, scene=None, width=1400, height=1200
     if accent:
         cmd.show('cartoon','_a'); cmd.show('sticks','_a and not hydro and not polymer.protein'); cmd.show('spheres','_a and metals')
         cmd.color('home_orange','_a')
+    if paint: cmd.color('home_orange',f'_p and ({paint})')   # orange part of the protein itself
     if sticks:
         cmd.show('sticks','_s and not hydro and not name N+C+O'); cmd.color('home_orange','_s')
     for k,v in dict(cartoon_transparency=0,stick_transparency=0,sphere_transparency=0,transparency=0,cartoon_color=-1,stick_color=-1,sphere_color=-1,cartoon_highlight_color=-1,sphere_scale=0.6,stick_radius=0.3,cartoon_side_chain_helper=1,cartoon_fancy_helices=1,

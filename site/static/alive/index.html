@@ -131,7 +131,7 @@ function recolour(){
 const capEl = document.getElementById("cap");
 let cur = 0, phase = "hold", phaseT = 0, melt = 0;   // melt: 0 = formed, 1 = fully merged and faded
 const cache = {};
-const load = i => cache[i] || (cache[i] = fetch(PROTEINS[i].url+"?v=8").then(r=>r.json()));
+const load = i => cache[i] || (cache[i] = fetch(PROTEINS[i].url+"?v=9").then(r=>r.json()));
 function show(i, d){
   cur=i; D=d; precompute(); computeView();
   capEl.textContent = PROTEINS[i].caption;
