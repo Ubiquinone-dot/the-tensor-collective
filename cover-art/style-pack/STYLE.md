@@ -46,4 +46,4 @@ Some posts also have a night-time cover that the site crossfades to in dark mode
 | `why-bio-ml.jpg` | Why work on bio ML |
 | `dna-binder-exploding.jpg` | On building diffusion models (RFD3) |
 | `bug.jpg` | Early DALL·E 3 experiment |
-| `man-gazing.jpg` | Introduction post |
+| `man-gazing.jpg` / `man-gazing-night.jpg` | Introduction post (day and dark-mode covers) |

@@ -54,6 +54,7 @@ Covers are made in ChatGPT (DALL·E 3 for the older ones). See `style-pack/` for
 - **Tool:** DALL·E 3
 - **Starting image:** none, text-only prompt.
 - **Prompt:** caption says "An impressionist oil painting from DALLE-3 of a man gazing into an exploding nebula."
+- **Dark-mode cover:** `site/static/imgs/man-dark.webp` (1254×1254), added 2026-10-25. Made in ChatGPT as a night-time repaint of `man.png`.
 
 ## Unused
 
