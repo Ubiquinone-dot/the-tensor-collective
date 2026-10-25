@@ -1,0 +1,356 @@
+{{- /*
+  Ideal gas law from kinetics + statistics, side by side with a loss function growing into a
+  trained network. Four paired steps; each side has a small live simulation.
+  Usage: {{< gas-and-gradients >}}  (canvas + MathJax; follows the site's .dark class)
+*/ -}}
+<figure class="gg-fig" aria-label="Two parallel derivations: the ideal gas law from molecular collisions, and neural-network training from a single loss term.">
+<style>
+.gg-fig { --gg-orange: #AF672B; margin: 2rem 0; }
+.dark .gg-fig { --gg-orange: #F6A15F; }
+.gg-fig .gg-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; margin-bottom: 0.6rem; }
+.gg-fig .gg-steps button { font: 600 0.78rem/1.25 var(--font-sans); text-align: left; padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border-strong); border-radius: 8px; background: var(--card); color: var(--muted-foreground);
+  cursor: pointer; transition: border-color .2s, color .2s; }
+.gg-fig .gg-steps button span { display: block; font-size: 0.68rem; font-weight: 500; opacity: .8; }
+.gg-fig .gg-steps button[aria-selected="true"] { border-color: var(--primary); color: var(--foreground); box-shadow: inset 0 -3px 0 var(--primary); }
+.gg-fig .gg-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.gg-fig .gg-panel { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.8rem 0.8rem; }
+.gg-fig .gg-head { font: 600 0.8rem/1.3 var(--font-sans); color: var(--foreground); margin-bottom: 0.35rem; }
+.gg-fig canvas { display: block; width: 100%; aspect-ratio: 340 / 220; }
+.gg-fig .gg-eq { font-size: 0.88rem; line-height: 1.45; color: var(--foreground); min-height: 6.2em; margin-top: 0.4rem; }
+.gg-fig .gg-eq > div { display: none; }
+.gg-fig .gg-eq > div.on { display: block; }
+.gg-fig .gg-eq p { margin: 0 0 0.3rem; }
+.gg-fig .gg-eq .live { font: 0.78rem var(--font-mono); color: var(--muted-foreground); }
+.gg-fig figcaption { text-align: center; font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.6rem; font-style: italic; }
+@media (max-width: 640px) {
+  .gg-fig .gg-panels { grid-template-columns: 1fr; }
+  .gg-fig .gg-steps { grid-template-columns: 1fr 1fr; }
+}
+</style>
+<div class="gg-steps" role="tablist">
+  <button role="tab" aria-selected="true" data-s="0">1 · One collision<span>one weight</span></button>
+  <button role="tab" aria-selected="false" data-s="1">2 · Average the hits<span>sum the loss</span></button>
+  <button role="tab" aria-selected="false" data-s="2">3 · Count the states<span>softmax</span></button>
+  <button role="tab" aria-selected="false" data-s="3">4 · PV = nRT<span>a trained network</span></button>
+</div>
+<div class="gg-panels">
+  <div class="gg-panel">
+    <div class="gg-head">A box of gas</div>
+    <canvas class="gg-gas" width="340" height="220"></canvas>
+    <div class="gg-eq">
+      <div class="on"><p>One molecule bounces off a wall and reverses its velocity, handing over momentum \(\Delta p = 2mv_x\). Force is just that, repeated per unit time.</p></div>
+      <div><p>Average over \(N\) molecules in volume \(V\): \(P = \dfrac{N m \langle v_x^2\rangle}{V}\), so \(PV = \tfrac{1}{3} N m \langle v^2 \rangle\).</p></div>
+      <div><p>Collisions shuffle energy around. Counting microstates at fixed total energy, the most likely spread is the Boltzmann distribution, \(p(E) \propto e^{-E/kT}\).</p></div>
+      <div><p>Equipartition gives \(\langle \tfrac{1}{2} m v^2 \rangle = \tfrac{3}{2} kT\), so \(PV = NkT = nRT\).</p><p class="live gg-live"></p></div>
+    </div>
+  </div>
+  <div class="gg-panel">
+    <div class="gg-head">A model learning</div>
+    <canvas class="gg-net" width="340" height="220"></canvas>
+    <div class="gg-eq">
+      <div class="on"><p>One weight, one example: \(L(w) = (y - wx)^2\). Its slope \(\partial L/\partial w = -2x(y - wx)\) says which way is downhill.</p></div>
+      <div><p>Average over \(N\) examples: \(L = \tfrac{1}{N}\sum_i (y_i - w x_i - b)^2\). The gradient is the same term, summed.</p></div>
+      <div><p>For classes, softmax the scores: \(p_k = \dfrac{e^{z_k/T}}{\sum_j e^{z_j/T}}\), and the loss is \(-\log p_{\text{true}}\). It's the same exponential as Boltzmann's, with scores standing in for energies.</p></div>
+      <div><p>Stack layers and apply the chain rule (backpropagation): the same downhill step now trains millions of weights at once.</p><p class="live gg-acc"></p></div>
+    </div>
+  </div>
+</div>
+<figcaption>Each step pairs up: a collision with a single weight, an average with a summed loss, Boltzmann with softmax, and a gas law with a trained network.</figcaption>
+<script>
+(() => {
+  const fig = document.currentScript.closest(".gg-fig");
+  const tabs = [...fig.querySelectorAll(".gg-steps button")];
+  const eqs = [...fig.querySelectorAll(".gg-eq")];
+  const gas = fig.querySelector(".gg-gas"), net = fig.querySelector(".gg-net");
+  const liveEl = fig.querySelector(".gg-live"), accEl = fig.querySelector(".gg-acc");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const W = 340, H = 220, BOX = { x0: 10, y0: 10, x1: 190, y1: 210 };
+  let step = 0, stepT = 0, userPicked = false;
+
+  // ---- colours from the site's CSS variables (re-read when .dark toggles) ----
+  let C = {};
+  function readColours() {
+    const cs = getComputedStyle(fig);
+    const v = n => cs.getPropertyValue(n).trim();
+    C = { teal: v("--primary"), orange: v("--gg-orange"), ink: v("--foreground"), soft: v("--muted-foreground"),
+          line: v("--border-strong"), card: v("--card") };
+  }
+  readColours();
+  new MutationObserver(() => { readColours(); if (reduced) drawAll(0); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
+  function setup(cv) {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    cv.width = W * dpr; cv.height = H * dpr;
+    const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); return ctx;
+  }
+  const g = setup(gas), n = setup(net);
+  const font = (px, w = 500) => `${w} ${px}px Inter, ui-sans-serif, system-ui, sans-serif`;
+
+  function select(s, byUser) {
+    step = s; stepT = 0; if (byUser) userPicked = true;
+    tabs.forEach((b, i) => b.setAttribute("aria-selected", i === s));
+    eqs.forEach(e => [...e.children].forEach((d, i) => d.classList.toggle("on", i === s)));
+    resetNet();
+    if (reduced) drawAll(0);
+  }
+  tabs.forEach(b => b.addEventListener("click", () => select(+b.dataset.s, true)));
+
+  // =================== gas: hard discs in a box ===================
+  const N = 70, R = 3.6, RC = 1.8, V0 = 70;          // RC: collision radius, kept small so the gas stays near-ideal
+  const P = [];
+  for (let i = 0; i < N; i++) {
+    const a = Math.random() * 6.2832;
+    P.push({ x: BOX.x0 + R + Math.random() * (BOX.x1 - BOX.x0 - 2 * R), y: BOX.y0 + R + Math.random() * (BOX.y1 - BOX.y0 - 2 * R),
+             vx: V0 * Math.cos(a), vy: V0 * Math.sin(a) });
+  }
+  // every molecule starts at the same speed; collisions relax them to Maxwell-Boltzmann
+  let impulse = 0, pressure = 0, flashes = [], trail = [];
+  function gasStep(dt) {
+    for (const p of P) {
+      p.x += p.vx * dt; p.y += p.vy * dt;
+      let hit = 0;
+      if (p.x < BOX.x0 + R) { p.x = BOX.x0 + R; hit = 2 * Math.abs(p.vx); p.vx = Math.abs(p.vx); flashes.push({ x: BOX.x0, y: p.y, v: 1, p }); }
+      if (p.x > BOX.x1 - R) { p.x = BOX.x1 - R; hit = 2 * Math.abs(p.vx); p.vx = -Math.abs(p.vx); flashes.push({ x: BOX.x1, y: p.y, v: 1, p }); }
+      if (p.y < BOX.y0 + R) { p.y = BOX.y0 + R; hit = 2 * Math.abs(p.vy); p.vy = Math.abs(p.vy); flashes.push({ x: p.x, y: BOX.y0, v: 1, p }); }
+      if (p.y > BOX.y1 - R) { p.y = BOX.y1 - R; hit = 2 * Math.abs(p.vy); p.vy = -Math.abs(p.vy); flashes.push({ x: p.x, y: BOX.y1, v: 1, p }); }
+      impulse += hit;
+    }
+    for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) {
+      const a = P[i], b = P[j], dx = b.x - a.x, dy = b.y - a.y, d2 = dx * dx + dy * dy;
+      if (d2 > 4 * RC * RC || d2 === 0) continue;
+      const d = Math.sqrt(d2), nx = dx / d, ny = dy / d;
+      const rel = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+      if (rel <= 0) continue;                       // already separating
+      a.vx -= rel * nx; a.vy -= rel * ny; b.vx += rel * nx; b.vy += rel * ny;
+      const o = (2 * RC - d) / 2; a.x -= o * nx; a.y -= o * ny; b.x += o * nx; b.y += o * ny;
+    }
+    // 2D: pressure = impulse per time per unit wall length; kT = <1/2 m v^2> with m = 1
+    const perim = 2 * ((BOX.x1 - BOX.x0 - 2 * R) + (BOX.y1 - BOX.y0 - 2 * R));
+    if (dt <= 0) return;
+    const inst = impulse / dt / perim; impulse = 0;
+    pressure += (inst - pressure) * Math.min(1, dt / 2.5);
+    const f = P[0]; trail.push([f.x, f.y]); if (trail.length > 160) trail.shift();
+  }
+  function kT() { let s = 0; for (const p of P) s += 0.5 * (p.vx * p.vx + p.vy * p.vy); return s / N; }
+
+  function drawGas(dt) {
+    g.clearRect(0, 0, W, H);
+    // flashes on the walls where molecules land
+    flashes = flashes.filter(f => (f.v -= dt * 2.5) > 0);
+    for (const f of flashes) {
+      if (step === 0 && f.p !== P[0]) continue;
+      g.fillStyle = C.orange; g.globalAlpha = f.v * (step === 0 ? 1 : 0.6);
+      g.beginPath(); g.arc(f.x, f.y, step === 0 ? 7 : 4, 0, 6.2832); g.fill();
+    }
+    g.globalAlpha = 1;
+    g.strokeStyle = C.ink; g.lineWidth = 2.4; g.lineJoin = "round";
+    g.strokeRect(BOX.x0, BOX.y0, BOX.x1 - BOX.x0, BOX.y1 - BOX.y0);
+    if (step === 0) {                                 // the tracked molecule's path
+      g.strokeStyle = C.orange; g.lineWidth = 1.8; g.globalAlpha = 0.7; g.beginPath();
+      trail.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke(); g.globalAlpha = 1;
+    }
+    for (let i = 0; i < N; i++) {
+      const p = P[i];
+      g.fillStyle = i === 0 && step === 0 ? C.orange : C.teal;
+      g.globalAlpha = step === 0 && i !== 0 ? 0.35 : 0.9;
+      g.beginPath(); g.arc(p.x, p.y, i === 0 && step === 0 ? R + 1.5 : R, 0, 6.2832); g.fill();
+    }
+    g.globalAlpha = 1;
+    const sx = 205;
+    g.fillStyle = C.soft; g.font = font(10.5);
+    if (step === 0) {
+      const f = P[0], sp = Math.hypot(f.vx, f.vy) || 1;
+      g.fillStyle = C.ink; g.font = font(12, 600); g.fillText("Δp = 2m vₓ", sx, 70);
+      g.fillStyle = C.soft; g.font = font(10.5); g.fillText("per bounce", sx, 86);
+      // arrow showing the tracked molecule's velocity
+      arrow(g, sx + 55 - 40 * f.vx / sp, 135 - 40 * f.vy / sp, sx + 55 + 40 * f.vx / sp, 135 + 40 * f.vy / sp, C.orange);
+      g.fillText("its velocity", sx, 190);
+    } else if (step === 1) {
+      g.fillStyle = C.ink; g.font = font(12, 600); g.fillText("pressure", sx, 40);
+      gauge(g, sx + 60, 120, 48, pressure / (N * kT() / ((BOX.x1 - BOX.x0) * (BOX.y1 - BOX.y0))) / 2);
+      g.fillStyle = C.soft; g.font = font(10.5); g.fillText("hits per second,", sx, 190); g.fillText("per unit of wall", sx, 204);
+    } else if (step === 2) {
+      histogram(g, sx, 30, 125, 160);
+    } else {
+      const A = (BOX.x1 - BOX.x0 - 2 * R) * (BOX.y1 - BOX.y0 - 2 * R), lhs = pressure * A, rhs = N * kT();
+      const mx = Math.max(lhs, rhs) * 1.15;
+      bar(g, sx + 10, 190, 40, 140 * lhs / mx, C.teal, "P·V");
+      bar(g, sx + 70, 190, 40, 140 * rhs / mx, C.orange, "N·kT");
+      if (liveEl) liveEl.textContent = `in this box: P·V = ${(lhs / 1000).toFixed(1)}k, N·kT = ${(rhs / 1000).toFixed(1)}k (2D, so ⟨½mv²⟩ = kT)`;
+    }
+  }
+  function histogram(c, x, y, w, h) {
+    const bins = 12, kt = kT(), vmax = 3.2 * Math.sqrt(kt), cnt = new Array(bins).fill(0);
+    for (const p of P) { const k = Math.floor(Math.hypot(p.vx, p.vy) / vmax * bins); if (k < bins) cnt[k]++; }
+    const bw = w / bins, scale = h / (N * 0.28);
+    c.fillStyle = C.teal; c.globalAlpha = 0.75;
+    cnt.forEach((k, i) => { const bh = Math.min(h, k * scale); c.fillRect(x + i * bw + 1, y + h - bh, bw - 2, bh); });
+    c.globalAlpha = 1;
+    // 2D Maxwell-Boltzmann speed distribution, p(v) = (v/kT) e^{-v^2/2kT}
+    c.strokeStyle = C.orange; c.lineWidth = 2.2; c.beginPath();
+    for (let i = 0; i <= 60; i++) {
+      const v = vmax * i / 60, pv = v / kt * Math.exp(-v * v / (2 * kt));
+      const yy = y + h - Math.min(h + 10, pv * N * (vmax / bins) * scale);
+      i ? c.lineTo(x + w * i / 60, yy) : c.moveTo(x, yy);
+    }
+    c.stroke();
+    c.strokeStyle = C.line; c.lineWidth = 1.2; c.beginPath(); c.moveTo(x, y + h); c.lineTo(x + w, y + h); c.stroke();
+    c.fillStyle = C.soft; c.font = font(10.5); c.fillText("speed →", x, y + h + 14);
+    c.fillStyle = C.orange; c.font = font(10.5, 600); c.fillText("∝ e^(−E/kT)", x + w - 62, y + 6);
+  }
+
+  // =================== model: loss, softmax, network ===================
+  let w1, wb, path, T = 1, lossHist, accNow;
+  const pts = [];
+  for (let i = 0; i < 14; i++) { const x = -1 + 2 * i / 13; pts.push([x, 0.9 * x + 0.25 + (Math.random() - 0.5) * 0.35]); }
+  function resetNet() { w1 = -1.2; wb = { w: -0.8, b: -0.6 }; path = []; lossHist = []; accNow = 0.1; }
+  resetNet();
+  function netStep(dt) {
+    if (step === 0) {
+      const x = 1, y = 1.4; w1 -= 0.9 * dt * (-2 * x * (y - w1 * x));
+      if (stepT > 6) { stepT = 0; w1 = -1.2; }
+    } else if (step === 1) {
+      let gw = 0, gb = 0;
+      for (const [x, y] of pts) { const r = y - wb.w * x - wb.b; gw += -2 * x * r; gb += -2 * r; }
+      wb.w -= 0.5 * dt * gw / pts.length; wb.b -= 0.5 * dt * gb / pts.length;
+      path.push([wb.w, wb.b]); if (path.length > 400) path.shift();
+      if (stepT > 7) { stepT = 0; wb = { w: -0.8 + Math.random() * 0.4, b: -0.6 }; path = []; }
+    } else if (step === 2) {
+      T = 1.6 + 1.2 * Math.sin(stepT * 0.9);
+    } else {
+      const e = lossHist.length;
+      if (e < 160) { lossHist.push(2.3 * Math.exp(-e / 28) + 0.05 + Math.random() * 0.05); accNow = Math.min(0.99, 0.1 + 0.89 * (1 - Math.exp(-e / 30))); }
+      else if (stepT > 12) { stepT = 0; lossHist = []; }
+    }
+  }
+  const Z = [1.1, 0.4, 1.6, 2.1, 0.7, 1.3, 0.2, 3.4, 1.9, 2.4];   // class scores; 7 wins
+  function drawNet() {
+    n.clearRect(0, 0, W, H);
+    const sx = 205;
+    if (step === 0) {
+      // data space: one example and the line y = w x
+      axes(n, 20, 20, 160, 180);
+      line(n, 20, 20, 160, 180, w1, 0, C.teal);
+      dot(n, 100 + 45, 110 - 1.4 * 45, 5.5, C.orange);
+      n.fillStyle = C.soft; n.font = font(10.5); n.fillText("y = w x", 30, 34);
+      parabola(n, sx, 30, 125, 150, w => (1.4 - w) ** 2, w1, -1.5, 3);
+    } else if (step === 1) {
+      axes(n, 20, 20, 160, 180);
+      for (const [x, y] of pts) dot(n, 20 + 80 + x * 70, 20 + 90 - y * 70, 3.4, C.orange);
+      line(n, 20, 20, 160, 180, wb.w, wb.b, C.teal, 70);
+      contour(n, sx, 30, 125, 150);
+    } else if (step === 2) {
+      n.fillStyle = C.ink; n.font = font(11, 600); n.fillText("scores z", 20, 24); n.fillText(`softmax, T = ${T.toFixed(1)}`, sx, 24);
+      const zs = Z.map(z => z / T), m = Math.max(...zs), ex = zs.map(z => Math.exp(z - m)), s = ex.reduce((a, b) => a + b, 0);
+      bars(n, 20, 190, 165, 150, Z.map(z => z / 3.6), 7);
+      bars(n, sx, 190, 125, 150, ex.map(e => e / s), 7);
+      n.fillStyle = C.soft; n.font = font(10.5); n.fillText(`loss = −log p(7) = ${(-Math.log(ex[7] / s)).toFixed(2)}`, 20, 214);
+    } else {
+      network(n, 15, 25, 175, 170);
+      lossCurve(n, sx, 30, 125, 150);
+      if (accEl) accEl.textContent = `digit accuracy: ${(accNow * 100).toFixed(0)}%`;
+    }
+  }
+
+  // ---- drawing helpers ----
+  function arrow(c, x0, y0, x1, y1, col) {
+    c.strokeStyle = col; c.fillStyle = col; c.lineWidth = 2.2; c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
+    const a = Math.atan2(y1 - y0, x1 - x0); c.beginPath(); c.moveTo(x1, y1);
+    c.lineTo(x1 - 8 * Math.cos(a - 0.45), y1 - 8 * Math.sin(a - 0.45)); c.lineTo(x1 - 8 * Math.cos(a + 0.45), y1 - 8 * Math.sin(a + 0.45)); c.fill();
+  }
+  function gauge(c, cx, cy, r, f) {
+    c.lineWidth = 9; c.lineCap = "round"; c.strokeStyle = C.line;
+    c.beginPath(); c.arc(cx, cy, r, Math.PI * 0.8, Math.PI * 2.2); c.stroke();
+    const a = Math.PI * 0.8 + Math.PI * 1.4 * Math.max(0, Math.min(1, f));
+    c.strokeStyle = C.teal; c.beginPath(); c.arc(cx, cy, r, Math.PI * 0.8, a); c.stroke();
+    c.lineCap = "butt"; arrow(c, cx, cy, cx + (r - 14) * Math.cos(a), cy + (r - 14) * Math.sin(a), C.orange);
+  }
+  function bar(c, x, base, w, h, col, label) {
+    c.fillStyle = col; roundRect(c, x, base - h, w, h, 4); c.fill();
+    c.fillStyle = C.ink; c.font = font(11, 600); c.fillText(label, x + w / 2 - c.measureText(label).width / 2, base + 14);
+  }
+  function roundRect(c, x, y, w, h, r) { c.beginPath(); c.roundRect ? c.roundRect(x, y, w, h, r) : c.rect(x, y, w, h); }
+  function axes(c, x, y, w, h) {
+    c.strokeStyle = C.line; c.lineWidth = 1.2; c.beginPath();
+    c.moveTo(x, y + h / 2); c.lineTo(x + w, y + h / 2); c.moveTo(x + w / 2, y); c.lineTo(x + w / 2, y + h); c.stroke();
+  }
+  function line(c, x, y, w, h, m, b, col, s = 45) {
+    const cx = x + w / 2, cy = y + h / 2, X0 = -w / 2 / s, X1 = w / 2 / s;
+    c.strokeStyle = col; c.lineWidth = 2.6; c.lineCap = "round"; c.beginPath();
+    c.moveTo(cx + X0 * s, cy - (m * X0 + b) * s); c.lineTo(cx + X1 * s, cy - (m * X1 + b) * s); c.stroke();
+  }
+  function dot(c, x, y, r, col) { c.fillStyle = col; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill(); }
+  function parabola(c, x, y, w, h, L, wNow, lo, hi) {
+    const top = L(lo), sy = v => y + h - (v / top) * h, sxp = v => x + (v - lo) / (hi - lo) * w;
+    c.strokeStyle = C.ink; c.lineWidth = 2; c.beginPath();
+    for (let i = 0; i <= 50; i++) { const v = lo + (hi - lo) * i / 50; i ? c.lineTo(sxp(v), sy(L(v))) : c.moveTo(sxp(v), sy(L(v))); }
+    c.stroke(); dot(c, sxp(wNow), sy(L(wNow)) - 5, 6, C.orange);
+    c.fillStyle = C.soft; c.font = font(10.5); c.fillText("loss L(w)", x, y - 6); c.fillText("w →", x + w - 22, y + h + 14);
+  }
+  function contour(c, x, y, w, h) {
+    // loss over (w, b) is a quadratic bowl: draw a few level sets and the descent path
+    let sw = 0, sx2 = 0, sxy = 0, sy = 0; for (const [a, b] of pts) { sw += a; sx2 += a * a; sxy += a * b; sy += b; }
+    const n0 = pts.length, wOpt = (n0 * sxy - sw * sy) / (n0 * sx2 - sw * sw), bOpt = (sy - wOpt * sw) / n0;
+    const mapX = v => x + w / 2 + (v - wOpt) * 38, mapY = v => y + h / 2 - (v - bOpt) * 48;
+    c.strokeStyle = C.line; c.lineWidth = 1.2;
+    const ax = Math.sqrt(sx2 / n0);
+    for (const k of [0.3, 0.6, 0.95, 1.35]) { c.beginPath(); c.ellipse(mapX(wOpt), mapY(bOpt), k * 38 / ax, k * 48, 0, 0, 6.2832); c.stroke(); }
+    c.strokeStyle = C.orange; c.lineWidth = 1.8; c.beginPath(); path.forEach(([a, b], i) => i ? c.lineTo(mapX(a), mapY(b)) : c.moveTo(mapX(a), mapY(b))); c.stroke();
+    dot(c, mapX(wb.w), mapY(wb.b), 5.5, C.orange); dot(c, mapX(wOpt), mapY(bOpt), 3, C.teal);
+    c.fillStyle = C.soft; c.font = font(10.5); c.fillText("loss over (w, b)", x, y - 6);
+  }
+  function bars(c, x, base, w, h, vals, win) {
+    const bw = w / vals.length;
+    vals.forEach((v, i) => {
+      c.fillStyle = i === win ? C.orange : C.line; roundRect(c, x + i * bw + 1.5, base - v * h, bw - 3, v * h, 2); c.fill();
+      c.fillStyle = i === win ? C.orange : C.soft; c.font = font(9.5, i === win ? 700 : 500); c.fillText(i, x + i * bw + bw / 2 - 3, base + 12);
+    });
+  }
+  let pulse = 0;
+  function network(c, x, y, w, h) {
+    const layers = [4, 6, 6, 3], X = i => x + 10 + i * (w - 20) / (layers.length - 1);
+    const Y = (i, j) => y + h / 2 + (j - (layers[i] - 1) / 2) * (h / 6.5);
+    pulse = (pulse + 0.012) % 2;                       // 0..1 forward pass, 1..2 backward pass
+    const fwd = pulse < 1, ph = fwd ? pulse : 2 - pulse;
+    for (let i = 0; i < layers.length - 1; i++) for (let a = 0; a < layers[i]; a++) for (let b = 0; b < layers[i + 1]; b++) {
+      const lit = Math.abs(ph * (layers.length - 1) - (i + 0.5)) < 0.5;
+      c.strokeStyle = lit ? (fwd ? C.teal : C.orange) : C.line; c.globalAlpha = lit ? 0.8 : 0.5; c.lineWidth = lit ? 1.4 : 1;
+      c.beginPath(); c.moveTo(X(i), Y(i, a)); c.lineTo(X(i + 1), Y(i + 1, b)); c.stroke();
+    }
+    c.globalAlpha = 1;
+    layers.forEach((m, i) => { for (let j = 0; j < m; j++) { c.fillStyle = C.card; c.strokeStyle = C.ink; c.lineWidth = 1.6;
+      c.beginPath(); c.arc(X(i), Y(i, j), 6, 0, 6.2832); c.fill(); c.stroke(); } });
+    c.fillStyle = fwd ? C.teal : C.orange; c.font = font(10.5, 600);
+    c.fillText(fwd ? "forward: predict →" : "← backward: gradients", x, y + h + 14);
+  }
+  function lossCurve(c, x, y, w, h) {
+    c.strokeStyle = C.line; c.lineWidth = 1.2; c.beginPath(); c.moveTo(x, y); c.lineTo(x, y + h); c.lineTo(x + w, y + h); c.stroke();
+    c.strokeStyle = C.orange; c.lineWidth = 2; c.beginPath();
+    lossHist.forEach((v, i) => { const xx = x + w * i / 160, yy = y + h - h * v / 2.5; i ? c.lineTo(xx, yy) : c.moveTo(xx, yy); }); c.stroke();
+    c.fillStyle = C.soft; c.font = font(10.5); c.fillText("loss", x + 4, y - 6); c.fillText("training →", x + w - 52, y + h + 14);
+  }
+
+  // =================== loop ===================
+  function drawAll(dt) { drawGas(dt); drawNet(); }
+  if (reduced) {
+    for (let i = 0; i < 1500; i++) gasStep(1 / 120);
+    for (let i = 0; i < 160; i++) { step = 3; netStep(0); } step = 0; resetNet(); select(0);
+    return;
+  }
+  let last = 0, raf = 0;
+  function tick(now) {
+    const dt = last ? Math.min((now - last) / 1000, 0.05) : 0; last = now; stepT += dt;
+    for (let k = 0; k < 3; k++) gasStep(dt / 3);
+    netStep(dt); drawAll(dt);
+    if (!userPicked && stepT > 11) select((step + 1) % 4);
+    raf = requestAnimationFrame(tick);
+  }
+  new IntersectionObserver(es => {
+    if (es[0].isIntersecting) { if (!raf) { last = 0; raf = requestAnimationFrame(tick); } }
+    else if (raf) { cancelAnimationFrame(raf); raf = 0; }
+  }).observe(fig);
+})();
+</script>
+</figure>
