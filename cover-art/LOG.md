@@ -4,7 +4,7 @@ One entry per cover: which post it's for, the starting image it was painted from
 
 Covers are made in ChatGPT (DALL·E 3 for the older ones). See `style-pack/` for the style guide to drop into a new session.
 
-**To add a cover:** save the starting image to `sources/<post-slug>.<ext>`, copy the template at the bottom, and fill it in. If the starting image needs crediting, set `cover.source` (and optionally `cover.sourceUrl`) in the post's front matter; it shows under the enlarged cover along with any `cover.caption`.
+**To add a cover:** save the starting image to `sources/<post-slug>.<ext>`, copy the template at the bottom, and fill it in. If the starting image needs crediting, set `cover.source` (and optionally `cover.sourceUrl`) in the post's front matter to record the credit.
 
 ---
 
