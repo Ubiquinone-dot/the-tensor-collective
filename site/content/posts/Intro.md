@@ -6,6 +6,7 @@ author: ["Jasper Butcher"]
 draft: false
 cover:
     image: imgs/man.png
+    imageDark: imgs/man-dark.webp
     alt: I can't paint as well as DALLE, but that's fine
     caption: An impressionist oil painting from DALLE-3 of a man gazing into an exploding nebula.
 TocOpen: true
