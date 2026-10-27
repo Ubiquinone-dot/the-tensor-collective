@@ -8,7 +8,7 @@
       Back to Essays
     </a>
 
-    <h1 class="post-title">{{ .Title }}</h1>
+    <h1 class="post-title{{ if eq .Params.titleBalance false }} no-balance{{ end }}">{{ .Title }}</h1>
 
     <div class="post-meta">
       <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
