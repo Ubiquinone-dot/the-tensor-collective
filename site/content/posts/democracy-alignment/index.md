@@ -14,6 +14,8 @@ cover:
   source: "Painted from an image in Encyclopædia Britannica's *Democracy* gallery"
   sourceUrl: "https://www.britannica.com/topic/democracy/images-videos"
 
+substack: "https://jasperbutcher.substack.com/p/democracy-as-an-alignment-problem"
+
 draft: false
 ---
 

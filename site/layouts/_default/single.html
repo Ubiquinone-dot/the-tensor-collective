@@ -14,6 +14,10 @@
       <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
       <span class="dot">&middot;</span>
       <span>{{ .ReadingTime }} min read</span>
+      {{- with .Params.substack }}
+      <span class="dot">&middot;</span>
+      <a href="{{ . }}" target="_blank" rel="noopener noreferrer">Published on Substack</a>
+      {{- end }}
     </div>
 
     {{ with $cover }}
