@@ -1,0 +1,618 @@
+#set page(margin: 1in)
+#set text(size: 10pt, font: "New Computer Modern")
+#set par(leading: 0.65em, justify: false)
+
+#import "@preview/cetz:0.4.2": canvas, draw
+
+// ----- figures: number only, no caption text -----
+#set figure(supplement: [Fig.])
+#show figure.caption: c => context text(size: 9pt)[
+  #strong[#c.supplement~#c.counter.display()]
+]
+
+// ----- answer-key toggle -----
+// compile with: `typst compile question.typst backprop_soln.pdf`                  (with answers)
+//          or:  `typst compile --input answers=false question.typst backprop.pdf` (question sheet)
+#let show_answers = sys.inputs.at("answers", default: "true") == "true"
+
+// ----- styling helpers -----
+#let ans(body) = if show_answers {
+  block(
+    above: 0.3em, below: 0.7em,
+    text(fill: rgb("#143c8c"), style: "italic")[
+      #text(style: "normal", weight: "bold")[Answer.] #body
+    ]
+  )
+}
+#let note(body) = text(fill: rgb("#6e6e6e"), style: "italic", size: 9pt, body)
+
+#align(center, text(size: 13pt, weight: "bold")[
+  Backpropagation — Exam Question 1#if show_answers [ (with answers)]
+])
+#v(0.3em)
+
+// ========= 1.1 — scalar sigmoid, forward + numerical backward =========
+*1.1 A scalar sigmoid unit.* Consider the scalar model
+$f = sigma(W x + b)$.
+
+*(a)* Decompose the forward pass into its primitive operations.
+#h(1fr) (2 pts)
+
+*(b)* Using the variables from (a), draw the computation graph.
+#h(1fr) (2 pts)
+
+*(c)* For $x = 1$, $W = 2$, $b = 3$, target $y = 1$, and squared-error
+loss $L = (f - y)^2$, compute the forward pass and the gradient at each
+node of the graph. You may annotate the graph or write forward and
+backward values for each operation.
+#h(1fr) (6 pts)
+
+*(d)* Derive $partial f \/ partial W$ analytically. You may use
+$sigma'(z) = sigma(z)(1 - sigma(z))$.
+#h(1fr) (1 pt)
+
+#ans[
+  *(a)*
+  $ z_1 &= W x             && quad "(multiply)" \
+    z_2 &= z_1 + b          && quad "(add)" \
+    f   &= sigma(z_2)       && quad "(sigmoid)" $
+
+  *(b)*
+  #align(center, canvas(length: 1cm, {
+    import draw: *
+    circle((0, 1.2), radius: 0.28, name: "W"); content("W", $W$)
+    circle((0, 0),   radius: 0.28, name: "x"); content("x", $x$)
+    rect((1.2, 0.3), (2.0, 0.9), name: "mul"); content("mul.center", $times$)
+    rect((2.8, 0.3), (3.6, 0.9), name: "add"); content("add.center", $+$)
+    circle((3.2, 2.0), radius: 0.28, name: "b"); content("b", $b$)
+    rect((4.4, 0.3), (5.2, 0.9), name: "sig"); content("sig.center", $sigma$)
+    content((6.1, 0.6), $f$, name: "f")
+    line("W", "mul", mark: (end: ">"))
+    line("x", "mul", mark: (end: ">"))
+    line("mul", "add", mark: (end: ">"))
+    line("b", "add", mark: (end: ">"))
+    line("add", "sig", mark: (end: ">"))
+    line("sig", (6.0, 0.6), mark: (end: ">"))
+  }))
+
+  *(c)* _Forward._
+  $ z_1 = W x = 2, quad z_2 = z_1 + b = 5, quad f = sigma(5) approx 0.9933, quad
+    L approx 4.48 times 10^(-5). $
+
+  _Backward._
+  $ (partial L)/(partial f)   &= 2(f - y) approx -1.34 times 10^(-2) \
+    (partial L)/(partial z_2) &= 2(f-y) f(1-f) approx -8.90 times 10^(-5) \
+    (partial L)/(partial z_1) &= (partial L)/(partial b) = (partial L)/(partial z_2) approx -8.90 times 10^(-5) \
+    (partial L)/(partial W)   &= (partial L)/(partial z_1) dot x approx -8.90 times 10^(-5), quad
+    (partial L)/(partial x)   = (partial L)/(partial z_1) dot W approx -1.78 times 10^(-4) $
+
+  *(d)* $ (partial f)/(partial W) = sigma'(W x + b) dot x
+    = sigma(W x + b)(1 - sigma(W x + b)) dot x. $
+  At $x = 1$, $b = 0$ this is $sigma(W)(1 - sigma(W))$.
+]
+
+// ========= 1.2 — sigmoid derivative curve, chain rule, dead gradient =========
+*1.2 The sigmoid-derivative curve.* @fig-sigprime plots the
+$partial f \/ partial W$ formula you derived in 1.1(d), evaluated at
+$x = 1$, $b = 0$, as a function of $W$.
+
+#figure(
+  image("plot_1_4.pdf", width: 55%),
+  caption: [],
+) <fig-sigprime>
+
+*(a)* Explain the shape of the curve in @fig-sigprime.
+#h(1fr) (1 pt)
+
+*(b)* Using the chain rule, derive $partial L \/ partial W$ for the
+scalar model under $L = (f - y)^2$.
+#h(1fr) (1 pt)
+
+*(c)* Explain why $partial L \/ partial W = 0$ when $f = y$.
+#h(1fr) (1 pt)
+
+*(d)* State the gradient descent update rule for $W$. Why would large
+initial values of $W$ lead to poor loss minimization?
+#h(1fr) (2 pts)
+
+#ans[
+  *(a)* Bell, symmetric about $W = 0$, peak $1/4$ at $W = 0$; decays to
+  $0$ in the tails as $sigma$ saturates and one of $sigma$, $(1 - sigma)$
+  vanishes.
+
+  *(b)* $ (partial L)/(partial W) = 2(f - y) dot sigma'(W x + b) dot x. $
+
+  *(c)* $f - y = 0 ⇒ partial L \/ partial W = 0$. A perfect fit leaves
+  nothing to minimize.
+
+  *(d)* $W arrow.l W - eta (partial L)/(partial W)$. Large $|W|$ pushes
+  $z$ deep into the sigmoid tails where $sigma'(z) approx 0$, so the
+  update vanishes — the "dead gradient" regime, in which $W$ barely
+  moves per step.
+]
+
+// ========= 1.3 — two-layer scalar =========
+*1.3 Two-layer scalar composition.* Now consider the two-layer
+composition
+$ G = sigma( W_2 sigma(W_1 x + b_1) + b_2 ) $
+and the same squared-error loss $L = (G - y)^2$.
+
+*(a)* Draw the computation graph for the full model and loss.
+#h(1fr) (1 pt)
+
+*(b)* Compute the forward pass and the gradient at each node, for
+scalar values $x = 1$, $W_1 = 2$, $b_1 = 1$, $W_2 = 4$, $b_2 = 1$,
+target $y = 1$.
+#h(1fr) (4 pts)
+
+*(c)* Explain why the gradient of $W_1$ is much smaller than the
+gradient of $W_2$.
+#h(1fr) (1 pt)
+
+#ans[
+  *(a)*
+  #v(0.3em)
+  #align(center, canvas(length: 0.85cm, {
+    import draw: *
+    circle((0, 1.2), radius: 0.26, name: "W1"); content("W1", $W_1$)
+    circle((0, 0),   radius: 0.26, name: "x");  content("x", $x$)
+    rect((1.0, 0.3), (1.7, 0.9), name: "m1"); content("m1.center", $times$)
+    rect((2.4, 0.3), (3.1, 0.9), name: "a1"); content("a1.center", $+$)
+    circle((2.75, 1.9), radius: 0.26, name: "b1"); content("b1", $b_1$)
+    rect((3.8, 0.3), (4.5, 0.9), name: "s1"); content("s1.center", $sigma$)
+    rect((5.4, 0.3), (6.1, 0.9), name: "m2"); content("m2.center", $times$)
+    circle((5.75, 1.9), radius: 0.26, name: "W2"); content("W2", $W_2$)
+    rect((6.8, 0.3), (7.5, 0.9), name: "a2"); content("a2.center", $+$)
+    circle((7.15, 1.9), radius: 0.26, name: "b2"); content("b2", $b_2$)
+    rect((8.2, 0.3), (8.9, 0.9), name: "s2"); content("s2.center", $sigma$)
+    rect((9.8, 0.3), (10.5, 0.9), name: "sub"); content("sub.center", $-$)
+    circle((10.15, 1.9), radius: 0.26, name: "y"); content("y", $y$)
+    rect((11.3, 0.3), (12.2, 0.9), name: "sq"); content("sq.center", $(dot)^2$)
+    content((13.0, 0.6), $L$)
+    content((9.35, 1.0), text(size: 7pt)[$G$])
+
+    line("W1", "m1", mark: (end: ">"))
+    line("x",  "m1", mark: (end: ">"))
+    line("m1", "a1", mark: (end: ">"))
+    line("b1", "a1", mark: (end: ">"))
+    line("a1", "s1", mark: (end: ">"))
+    line("s1", "m2", mark: (end: ">"))
+    line("W2", "m2", mark: (end: ">"))
+    line("m2", "a2", mark: (end: ">"))
+    line("b2", "a2", mark: (end: ">"))
+    line("a2", "s2", mark: (end: ">"))
+    line("s2", "sub", mark: (end: ">"))
+    line("y", "sub", mark: (end: ">"))
+    line("sub", "sq", mark: (end: ">"))
+    line("sq", (12.9, 0.6), mark: (end: ">"))
+  }))
+
+  *(b)* With $h = sigma(W_1 x + b_1)$, $z_2 = W_2 h + b_2$:
+
+  _Forward._
+  $ z_1 = 3, quad h approx 0.9526, quad z_2 approx 4.810, quad
+    G approx 0.9919, quad L approx 6.53 times 10^(-5). $
+
+  _Backward._
+  $ (partial L)/(partial G)   &= 2(G - y) approx -1.62 times 10^(-2) \
+    (partial L)/(partial z_2) &= 2(G-y) G(1-G) approx -1.30 times 10^(-4) \
+    (partial L)/(partial W_2) &= (partial L)/(partial z_2) dot h approx -1.23 times 10^(-4),
+      quad (partial L)/(partial b_2) approx -1.30 times 10^(-4) \
+    (partial L)/(partial h)   &= (partial L)/(partial z_2) dot W_2 approx -5.18 times 10^(-4) \
+    (partial L)/(partial z_1) &= (partial L)/(partial h) dot h(1-h) approx -2.34 times 10^(-5) \
+    (partial L)/(partial W_1) &= (partial L)/(partial z_1) dot x approx -2.34 times 10^(-5),
+      quad (partial L)/(partial b_1) approx -2.34 times 10^(-5) $
+
+  *(c)* The chain to $W_1$ passes through one more sigmoid than the
+  chain to $W_2$, picking up the first-sigmoid derivative
+  $h(1-h) approx 0.045$ together with an upstream $W_2 = 4$ factor; the
+  $h$ at the tail of the $W_2$ chain cancels in the ratio, giving
+  $partial L \/ partial W_1 approx W_2 (1 - h) dot partial L \/ partial W_2
+  approx 0.19 dot partial L \/ partial W_2$ — the $tilde.op 5 times$ gap.
+  With more layers, this saturation factor compounds.
+]
+
+#pagebreak(weak: true)
+
+// ========= 1.4 — fully-connected + init regimes =========
+*1.4 Fully-connected variant and weight initialization.* Consider a
+fully-connected variant of the two-layer model from 1.3:
+$ h = sigma(bold(W)_1 x + b_1), quad G = sigma(bold(W)_2 h + b_2), $
+where the input $x in RR^2$ is now a 2-feature vector,
+$bold(W)_1 in RR^(4 times 2)$ and $bold(W)_2 in RR^(1 times 4)$ are
+weight matrices (boldface to distinguish them from the scalar $W_1$,
+$W_2$ of 1.3), $b_1 in RR^4$, $b_2 in RR$, and $h in RR^4$ is the
+hidden activation. The scalar chain from 1.3 corresponds to a single
+_stream_ of this network — one entry of $bold(W)_1$ times one entry of
+$bold(W)_2$, shown as the highlighted path in @fig-fcn — which reduces
+exactly to the scalar 1.3 model only when every off-path entry of
+$bold(W)_1$ and $bold(W)_2$ is zero.
+
+#v(0.3em)
+
+#figure(
+  canvas(length: 1.0cm, {
+  import draw: *
+  let dim = (stroke: rgb(0, 0, 0, 60) + 0.6pt)
+  let hot = (stroke: rgb("#e6781e") + 1.6pt)
+
+  circle((0, 2.0), radius: 0.32, name: "x1",
+         stroke: rgb("#e6781e") + 1.6pt); content("x1", $x_1$)
+  circle((0, 0.4), radius: 0.32, name: "x2"); content("x2", $x_2$)
+  circle((2.5, 2.4), radius: 0.32, name: "h1",
+         stroke: rgb("#e6781e") + 1.6pt); content("h1", $h_1$)
+  circle((2.5, 1.6), radius: 0.32, name: "h2"); content("h2", $h_2$)
+  circle((2.5, 0.8), radius: 0.32, name: "h3"); content("h3", $h_3$)
+  circle((2.5, 0.0), radius: 0.32, name: "h4"); content("h4", $h_4$)
+  circle((5.0, 1.2), radius: 0.32, name: "G",
+         stroke: rgb("#e6781e") + 1.6pt); content("G", $G$)
+
+  for a in ("x1","x2") {
+    for b in ("h1","h2","h3","h4") {
+      line(a, b, ..dim, mark: (end: ">"))
+    }
+  }
+  for b in ("h1","h2","h3","h4") {
+    line(b, "G", ..dim, mark: (end: ">"))
+  }
+
+  line("x1", "h1", ..hot, mark: (end: ">"))
+  line("h1", "G",  ..hot, mark: (end: ">"))
+  content((1.25, 2.45), text(fill: rgb("#e6781e"), size: 8pt)[$bold(W)_1$])
+  content((3.75, 2.05), text(fill: rgb("#e6781e"), size: 8pt)[$bold(W)_2$])
+}),
+  caption: [],
+) <fig-fcn>
+
+We train this network on the two-moons binary classification dataset
+(@fig-moons). The four loss curves (A–D) in @fig-inits correspond to
+four different weight initializations ($eta = 0.01$ for $5000$ epochs):
+A — all zeros;
+B — Gaussian ($W_(i j) tilde cal(N)(0, 1)$);
+C — large magnitude ($W_(i j) tilde cal(N)(0, 10^2)$);
+D — symmetric ($W_(i j) = 1$ for every entry of $bold(W)_1$ and $bold(W)_2$).
+
+#figure(
+  image("plot_moons.pdf", width: 42%),
+  caption: [],
+) <fig-moons>
+
+#figure(
+  image("plot_1_5.pdf", width: 100%),
+  caption: [],
+) <fig-inits>
+
+*(a)* Decompose the forward pass into its constituent operations,
+annotating the shape of each intermediate at every step.
+#h(1fr) (2 pts)
+
+*(b)* In one sentence per plot, explain the behavior of each of the
+four curves, tying back to your analyses in 1.2 and 1.3.
+#h(1fr) (4 pts)
+
+*(c)* The dataset is a binary classification task. In addition to the
+squared-error loss we have used so far, name one other loss that would
+be appropriate here and briefly justify the choice.
+#h(1fr) (1 pt)
+
+#ans[
+  *(a)*
+  $ z_1 &= bold(W)_1 x + b_1 && in RR^4 \
+    h   &= sigma(z_1)        && in RR^4 \
+    z_2 &= bold(W)_2 h + b_2 && in RR \
+    G   &= sigma(z_2)        && in RR $
+
+  *(b)*
+  - _A — zero._ Flat at $0.25$: all weights $0$, so first-layer gradients
+    carry a $W_2 = 0$ factor (1.2b) and every hidden unit is identical;
+    only $b_2$ learns, giving constant $G approx 0.5$.
+  - _B — Gaussian._ Healthy. $|z|$ near $0$ keeps $sigma'(z)$ near its
+    max $1/4$ (1.2a); the 1.3 stream propagates gradient cleanly; units
+    break symmetry.
+  - _C — large._ Stuck. $|z|$ enormous so $sigma'(z) approx 0$ (1.2a);
+    the stream in 1.3 multiplies two such vanishing factors; only $b_2$
+    drifts.
+  - _D — symmetric ($W = 1$)._ Descends, then plateaus above B.
+    Gradients flow, but every hidden unit sees identical
+    $z_j = x_1 + x_2$ and the same gradient — the four units update in
+    lockstep, so the net has the capacity of one unit.
+
+  *(c)* _Binary cross-entropy:_
+  $L_("BCE") = -[y log f + (1-y) log(1-f)]$. Two reasons: (i) MLE for
+  Bernoulli targets, penalizing confident wrong predictions more
+  steeply; (ii) with sigmoid output,
+  $partial L_("BCE") \/ partial z = f - y$ — the output $sigma'$
+  factor cancels, removing the saturation slowdown MSE suffers.
+]
+
+#pagebreak(weak: true)
+
+// ========= 1.5 — LayerNorm =========
+*1.5 LayerNorm.* Consider an extension of the model in 1.4 where a
+_LayerNorm_ is inserted after the first linear layer and before the
+hidden sigmoid:
+$ z_1 = bold(W)_1 x + b_1, quad hat(z)_1 = (z_1 - mu) / s, quad h =
+  sigma(hat(z)_1), $
+where $h in RR^4$ is the hidden activation passed to the output layer
+(same role as in 1.4), and $mu$, $s$ are the per-sample mean and
+standard deviation of $z_1$ across the four hidden units:
+$ mu = 1/4 sum_(i=1)^4 (z_1)_i, quad
+  s = sqrt( 1/4 sum_(i=1)^4 ((z_1)_i - mu)^2 ). $
+
+@fig-ln shows training loss on the moons data under the same poor
+(large-magnitude) initialization as 1.4(C), both with and without LN
+(left panel). The right panel shows the magnitude of the gradient at
+every entry of $bold(W)_1$ and $bold(W)_2$, captured at epoch $1000$
+(dashed grey line in the left panel), when the performance of the
+non-LN model is only slowly improving.
+
+#figure(
+  image("plot_ln.pdf", width: 90%),
+  caption: [],
+) <fig-ln>
+
+*(a)* Redraw the computation graph for a single stream of this
+modified network.
+#h(1fr) (2 pts)
+
+*(b)* What is the added term to the chain of gradients flowing through
+the network?
+#h(1fr) (1 pt)
+
+*(c)* Using the $partial f \/ partial W$ curve in @fig-sigprime,
+explain how LayerNorm shifts the pre-activation $z_1$ toward the
+region where $sigma'$ is large, and why this makes the LN variant
+more _robust_ to different initialization scales of $bold(W)_1$.
+#h(1fr) (3 pts)
+
+*(d)* Using the right panel of @fig-ln, explain why the LayerNorm
+variant converges much faster than the no-LN model.
+#h(1fr) (1 pt)
+
+*(e)* Using the $partial f \/ partial W$ curve in @fig-sigprime,
+explain why the gradient magnitude is larger at both $bold(W)_1$ and
+$bold(W)_2$ under LayerNorm.
+#h(1fr) (1 pt)
+
+#ans[
+  *(a)* Single stream, with LN inserted between the first add and the
+  first sigmoid:
+  #v(0.3em)
+  #align(center, canvas(length: 0.85cm, {
+    import draw: *
+    // layer 1
+    circle((0, 1.2), radius: 0.26, name: "W1"); content("W1", $W_1$)
+    circle((0, 0),   radius: 0.26, name: "x");  content("x", $x$)
+    rect((1.0, 0.3), (1.7, 0.9), name: "m1"); content("m1.center", $times$)
+    rect((2.4, 0.3), (3.1, 0.9), name: "a1"); content("a1.center", $+$)
+    circle((2.75, 1.9), radius: 0.26, name: "b1"); content("b1", $b_1$)
+    rect((3.8, 0.3), (4.8, 0.9), name: "ln"); content("ln.center", text(size: 8pt)[LN])
+    rect((5.5, 0.3), (6.2, 0.9), name: "s1"); content("s1.center", $sigma$)
+    // layer 2
+    rect((7.1, 0.3), (7.8, 0.9), name: "m2"); content("m2.center", $times$)
+    circle((7.45, 1.9), radius: 0.26, name: "W2"); content("W2", $W_2$)
+    rect((8.5, 0.3), (9.2, 0.9), name: "a2"); content("a2.center", $+$)
+    circle((8.85, 1.9), radius: 0.26, name: "b2"); content("b2", $b_2$)
+    rect((9.9, 0.3), (10.6, 0.9), name: "s2"); content("s2.center", $sigma$)
+    content((11.3, 0.6), $G$)
+    // h label on bridge arrow
+    content((6.65, 1.0), text(size: 7pt)[$h$])
+
+    line("W1", "m1", mark: (end: ">"))
+    line("x",  "m1", mark: (end: ">"))
+    line("m1", "a1", mark: (end: ">"))
+    line("b1", "a1", mark: (end: ">"))
+    line("a1", "ln", mark: (end: ">"))
+    line("ln", "s1", mark: (end: ">"))
+    line("s1", "m2", mark: (end: ">"))
+    line("W2", "m2", mark: (end: ">"))
+    line("m2", "a2", mark: (end: ">"))
+    line("b2", "a2", mark: (end: ">"))
+    line("a2", "s2", mark: (end: ">"))
+    line("s2", (11.2, 0.6), mark: (end: ">"))
+  }))
+
+  *(b)* For a single stream, treating $mu$ and $s$ as fixed scalars,
+  $hat(z)_1 = (z_1 - mu) \/ s$ gives
+  $ (partial hat(z)_1)/(partial z_1) = 1/s. $
+  The chain therefore picks up an extra factor of $1/s$ — LN rescales
+  backward gradients by the reciprocal of the pre-activation standard
+  deviation. (The full Jacobian across all four units additionally
+  couples them through $mu$ and $s$, but the single-stream factor is
+  simply $1/s$.)
+
+  *(c)* @fig-sigprime shows $sigma'$ peaked at $1/4$ when the argument
+  is $0$ and decaying to $0$ in the tails. LN pulls $z_1$ to mean $0$
+  and unit variance across the hidden units, so every pre-activation
+  sits within $tilde.op plus.minus 2$ of the peak — regardless of
+  $|bold(W)_1|$.
+
+  Without LN, $|z_1|$ scales with $|bold(W)_1|$: small init lands near
+  the peak and training works; large init lands in the dead tails and
+  training stalls — so the trajectory is sensitive to the init scale.
+  With LN, $hat(z)_1$ has mean $0$ and unit variance regardless of
+  $|bold(W)_1|$, and $sigma'(hat(z)_1)$ is decoupled from the init
+  scale. This does not make LN _strictly_ better (a well-tuned init
+  matches it, see 1.4B), but it removes init-scale as something the
+  practitioner must get right.
+
+  *(d)* Right panel: LN gradients sit $tilde.op 2 times$ above no-LN
+  at both layers. Under $W arrow.l W - eta nabla_W L$, a larger
+  gradient produces a larger per-step change; over $5000$ epochs LN
+  accumulates many more useful updates and the loss descends
+  accordingly.
+
+  *(e)* From (c), LN keeps $sigma'(hat(z)_1) approx 1/4$; without LN,
+  $sigma'(z_1) approx 0$. The $sigma'$ factor enters the chain
+  _directly_ for $bold(W)_1$ and _indirectly_ for $bold(W)_2$ —
+  saturated $h$ pushes $z_2$ into saturation too, whereas healthy $h$
+  under LN keeps $z_2$ off the tails. Saturation therefore propagates
+  to both layers.
+]
+
+#pagebreak(weak: true)
+
+// ========= 1.6 — KNN contrast =========
+*1.6 K-nearest neighbors.* A _K-nearest-neighbors_ (KNN) classifier
+assigns to each input the majority label among its $K$ closest points
+in the training set (by Euclidean distance). Unlike the sigmoid MLP
+from 1.4, KNN has no trainable parameters — it simply stores the
+training data and computes distances at prediction time.
+
+@fig-boundary shows the decision boundaries of four classifiers on the
+moons training data: the MLP from 1.4(B) (Gaussian init, trained to
+convergence) and three KNN classifiers. Which is which has been
+anonymized as "Model A"–"Model D". The training set contains
+$N_0 = 106$ class-$0$ points and $N_1 = 94$ class-$1$ points
+($N = N_0 + N_1 = 200$).
+
+#figure(
+  image("plot_boundary.pdf", width: 100%),
+  caption: [],
+) <fig-boundary>
+
+*(a)* Name one practical advantage and one practical disadvantage of
+KNN relative to the trained MLP.
+#h(1fr) (2 pts)
+
+*(b)* The NumPy skeleton below implements a KNN classifier for binary
+labels. Fill in the three blanks (marked `...`) so that the function
+returns the predicted label for each row of `X_test`.
+#h(1fr) (3 pts)
+
+```python
+import numpy as np
+
+def knn_predict(X_train, y_train, X_test, K):
+    """
+    X_train: (N, d) training inputs
+    y_train: (N,)   training labels in {0, 1}
+    X_test:  (M, d) query points
+    Returns: (M,) predicted labels in {0, 1}
+    """
+    preds = np.zeros(X_test.shape[0])
+    for i, x in enumerate(X_test):
+        # 1. Euclidean distances from x to every training point: shape (N,)
+        dists = ...
+        # 2. indices of the K nearest training points
+        idx   = ...
+        # 3. majority label among those K neighbors
+        preds[i] = ...
+    return preds
+```
+
+*(c)* What is the computational cost of a single prediction at test
+time, as a function of the training-set size $N$ and the input
+dimension $d$? How does this compare with a forward pass through the
+2-4-1 MLP from 1.4?
+#h(1fr) (1 pt)
+
+*(d)* The sigmoid MLP was trained by gradient descent. Why can a KNN
+classifier _not_ be trained the same way?
+#h(1fr) (1 pt)
+
+*(e)* Three of the four panels (A, B, C) show KNN classifiers with
+$K in {1, 5}$ together with the MLP. Match each of Models A, B, C to
+one of $\{$MLP, KNN with $K = 1$, KNN with $K = 5\}$, and justify your
+assignments from the shape of the boundaries.
+#h(1fr) (2 pts)
+
+*(f)* Panel D shows a KNN classifier with $K = N = 200$. Explain why
+its prediction is constant across the plane, referring to the class
+balance stated above.
+#h(1fr) (1 pt)
+
+#ans[
+  *(a)* _Advantages._ Zero training cost — just store the data, no
+  optimization or hyperparameters beyond $K$; and no parametric
+  assumption, so the class of boundaries KNN can express grows with
+  the dataset. _Disadvantages._ Prediction is $O(N d)$ per query, so
+  inference scales with the training-set size; the classifier is
+  sensitive to label noise, where a single mislabelled point near the
+  boundary directly flips predictions in its neighbourhood; and
+  performance degrades in high dimensions where Euclidean distances
+  become uninformative.
+
+  *(b)*
+  ```python
+  dists    = np.linalg.norm(X_train - x, axis=1)
+  idx      = np.argsort(dists)[:K]
+  preds[i] = (y_train[idx].mean() > 0.5).astype(float)
+  ```
+  Line 1 broadcasts $x$ against the $(N, d)$ training matrix and takes
+  the row-wise Euclidean norm to get an $(N,)$ distance vector. Line 2
+  sorts the distances and keeps the $K$ smallest indices. Line 3
+  averages the neighbor labels (in ${0, 1}$ the mean is the fraction
+  of class-1 votes) and thresholds at $1\/2$, equivalent to the
+  majority rule $hat y = bb(1)[sum_(i in cal(N)_K) y_i > K\/2]$.
+
+  *(c)* $O(N d)$ per query: $O(d)$ to compute each of the $N$
+  training-point distances, then $O(N)$ to find the $K$ smallest. The
+  2-4-1 MLP is $O(d H + H) = O(d H)$ with $H = 4$ hidden units —
+  independent of $N$. KNN prediction therefore scales with
+  training-set size; the MLP's does not.
+
+  *(d)* KNN has no trainable parameters — the "model" is the training
+  data itself. Any continuous handle enters through an $arg min$
+  inside the nearest-neighbor lookup, which is piecewise-constant, so
+  the gradient of the loss with respect to it is zero almost
+  everywhere. Gradient descent therefore has nothing useful to
+  minimize over.
+
+  *(e)* $A = $ KNN $K = 5$; $B = $ MLP; $C = $ KNN $K = 1$.
+  - _C (K=1):_ most jagged, each training point owns a small Voronoi
+    cell; label noise shows up as tiny outlier islands.
+  - _A (K=5):_ piecewise-linear with moderate pockets — local voting
+    smooths the $K = 1$ cells but still can't produce a continuous
+    curve.
+  - _B (MLP):_ single smooth curve — the $0.5$ level set of
+    $sigma(bold(W)_2 sigma(bold(W)_1 x + b_1) + b_2)$ is necessarily
+    continuous and is sculpted by only four hidden sigmoids.
+
+  *(f)* With $K = N$ every query sees the entire training set, so the
+  neighbor average equals the global mean label $N_1 \/ N = 94/200 =
+  0.47 < 0.5$ at every point. The majority vote therefore returns
+  class $0$ everywhere — KNN at $K = N$ reduces to the constant
+  majority-class predictor.
+]
+
+// ----- Discussion notes (commented out; kept here for reference) -----
+//
+// #if show_answers [
+//
+// #v(0.5em)
+// #line(length: 100%, stroke: 0.4pt)
+// #v(0.3em)
+//
+// == Discussion notes (not part of exam)
+//
+// *Arc.* scalar decompose -> graph -> numerical -> analytical +
+// sigma' plot + dead-gradient intuition -> two-layer scalar numerical
+// -> matrix-weight variant + training curves tying it all together.
+//
+// *Point budget.* 1.1=11 + 1.2=5 + 1.3=6 + 1.4=7 + 1.5=8 + 1.6=10 = 47 pts.
+//
+// *Deferred to a later question.* BatchNorm, RMSNorm, depth studies.
+//
+// *Notes on the 1.3(b) numerical choice.*
+// - x = 1, W_1 = 2, b_1 = 1 gives z_1 = 3, h = sigma(3) ~ 0.95 —
+//   first layer mildly saturating.
+// - W_2 = 4, b_2 = 1 gives z_2 ~ 4.81 — second layer saturates harder.
+// - Resulting dL/dW_1 ~ -2.3e-5 is about 5x smaller than
+//   dL/dW_2 ~ -1.2e-4. Milder gap than with b_1 = 3 (z_1 = 5,
+//   ratio ~40x).
+//
+// *Notes on the 1.4 plot.* Four init regimes factor into two orthogonal
+// failure axes — dead gradient vs. preserved symmetry.
+// - Zero: both — no gradient signal and symmetric.
+// - Large magnitude: dead gradient only — sigma' saturated, random
+//   starts break symmetry.
+// - Symmetric (W=1): symmetric only — gradients flow fine, units
+//   lockstep. Descends with capacity of one hidden unit.
+// - Gaussian: neither — healthy.
+//
+// With eta = 0.01 the large-magnitude panel shows a slight downward
+// drift — that comes from b_2 (no sigmoid in front of it), not from
+// deep-network gradient signal.
+//
+// ]

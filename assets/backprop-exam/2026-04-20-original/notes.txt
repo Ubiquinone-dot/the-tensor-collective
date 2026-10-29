@@ -1,0 +1,89 @@
+"""Train a sigmoid MLP and produce plots for 1.5 and 1.6."""
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import rcParams
+
+rcParams['font.family'] = 'serif'
+rcParams['font.size'] = 10
+
+def make_moons(n, noise=0.2, seed=0):
+    rng = np.random.RandomState(seed)
+    n1 = n // 2; n2 = n - n1
+    t1 = rng.uniform(0, np.pi, n1)
+    X1 = np.stack([np.cos(t1), np.sin(t1)], axis=1)
+    t2 = rng.uniform(0, np.pi, n2)
+    X2 = np.stack([1 - np.cos(t2), -np.sin(t2) + 0.5], axis=1)
+    X = np.concatenate([X1, X2], axis=0) + rng.randn(n, 2) * noise
+    y = np.concatenate([np.zeros(n1), np.ones(n2)])
+    idx = rng.permutation(n)
+    return X[idx], y[idx]
+
+def sigmoid(z):
+    return 1.0 / (1.0 + np.exp(-np.clip(z, -60, 60)))
+
+def init_params(d, h1, h2, d_out, scale, seed=1):
+    rng = np.random.RandomState(seed)
+    if scale == 'xavier':
+        s1, s2, s3 = np.sqrt(1/d), np.sqrt(1/h1), np.sqrt(1/h2)
+    elif scale == 'large':
+        s1 = s2 = s3 = 12.0
+    elif scale == 'tiny':
+        s1 = s2 = s3 = 1e-3
+    return {
+        'W1': rng.randn(d, h1) * s1, 'b1': np.zeros(h1),
+        'W2': rng.randn(h1, h2) * s2, 'b2': np.zeros(h2),
+        'W3': rng.randn(h2, d_out) * s3, 'b3': np.zeros(d_out),
+    }
+
+def forward(X, p):
+    z1 = X @ p['W1'] + p['b1']; h1 = sigmoid(z1)
+    z2 = h1 @ p['W2'] + p['b2']; h2 = sigmoid(z2)
+    z3 = h2 @ p['W3'] + p['b3']; f = sigmoid(z3)
+    return f, (z1, h1, z2, h2, z3, f)
+
+def loss(f, y):
+    return 0.5 * np.mean((f.ravel() - y)**2)
+
+def backward(X, y, p, cache):
+    z1, h1, z2, h2, z3, f = cache
+    n = X.shape[0]
+    y = y.reshape(-1, 1)
+    dLdf  = (f - y) / n
+    dLdz3 = dLdf * f * (1 - f)
+    dW3 = h2.T @ dLdz3;  db3 = dLdz3.sum(0)
+    dLdh2 = dLdz3 @ p['W3'].T
+    dLdz2 = dLdh2 * h2 * (1 - h2)
+    dW2 = h1.T @ dLdz2;  db2 = dLdz2.sum(0)
+    dLdh1 = dLdz2 @ p['W2'].T
+    dLdz1 = dLdh1 * h1 * (1 - h1)
+    dW1 = X.T @ dLdz1;   db1 = dLdz1.sum(0)
+    return {'W1': dW1, 'b1': db1, 'W2': dW2, 'b2': db2, 'W3': dW3, 'b3': db3}
+
+def train(X_tr, y_tr, X_te, y_te, scale, lr=1.0, epochs=800,
+          hidden=(16, 16), init_seed=1):
+    p = init_params(X_tr.shape[1], hidden[0], hidden[1], 1, scale, init_seed)
+    tr, te, gn = [], [], []
+    for _ in range(epochs):
+        f, cache = forward(X_tr, p)
+        g = backward(X_tr, y_tr, p, cache)
+        for k in p: p[k] = p[k] - lr * g[k]
+        tr.append(loss(f, y_tr))
+        f_te, _ = forward(X_te, p)
+        te.append(loss(f_te, y_te))
+        gn.append(np.linalg.norm(g['W1']))
+    return np.array(tr), np.array(te), np.array(gn)
+
+X_all, y_all = make_moons(400, noise=0.25, seed=0)
+X_tr_full, y_tr_full = X_all[:200], y_all[:200]
+X_te, y_te = X_all[200:], y_all[200:]
+
+# 1.5 scenarios
+trA, teA, _ = train(X_tr_full, y_tr_full, X_te, y_te, 'xavier',
+                    lr=1.0, epochs=800)                         # reasonable
+trB, teB, _ = train(X_tr_full, y_tr_full, X_te, y_te, 'large',
+                    lr=1.0, epochs=800)                         # poor init
+X_tr_small, y_tr_small = X_all[:20], y_all[:20]
+trC, teC, _ = train(X_tr_small, y_tr_small, X_te, y_te, 'xavier',
+                    lr=1.5, epochs=2000, hidden=(64, 64))       # overfit
+
+# (plotting code below: 1.5 = three loss panels, 1.6 = three grad-norm panels)
